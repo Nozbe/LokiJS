@@ -30,8 +30,16 @@
      * @constructor IncrementalIndexedDBAdapter
      *
      * @param {object=} options Configuration options for the adapter
-     * @param {boolean} options.onversionchange Function to call on `IDBDatabase.onversionchange` event
+     * @param {function} options.onversionchange Function to call on `IDBDatabase.onversionchange` event
      *     (most likely database deleted from another browser tab)
+     * @param {function} options.onFetchStart Function to call once IDB load has begun.
+     *     Use this as an opportunity to execute code concurrently while IDB does work on a separate thread
+     * @param {function} options.serializeChunk Called with a chunk (array of Loki documents) before
+     *     it's saved to IndexedDB. You can use it to manually compress on-disk representation
+     *     for faster database loads. Hint: Hand-written conversion of objects to arrays is very
+     *     profitable for performance. If you use this, you must also pass options.deserializeChunk.
+     * @param {function} options.deserializeChunk Called with a chunk serialized with options.serializeChunk
+     *     Expects an array of Loki documents as the return value
      */
     function IncrementalIndexedDBAdapter(options) {
       this.mode = "incremental";
@@ -130,8 +138,9 @@
       console.time("exportDatabase");
 
       var chunksToSave = [];
+      var savedLength = 0;
 
-      loki.collections.forEach(function(collection, i) {
+      var prepareCollection = function (collection, i) {
         // Find dirty chunk ids
         var dirtyChunks = new Set();
         collection.dirtyIds.forEach(function(lokiId) {
@@ -141,33 +150,47 @@
         collection.dirtyIds = [];
 
         // Serialize chunks to save
-        dirtyChunks.forEach(function(chunkId) {
+        var prepareChunk = function (chunkId) {
           var chunkData = that._getChunk(collection, chunkId);
+          if (that.options.serializeChunk) {
+            chunkData = that.options.serializeChunk(collection.name, chunkData);
+          }
           // we must stringify now, because IDB is asynchronous, and underlying objects are mutable
+          chunkData = JSON.stringify(chunkData);
+          savedLength += chunkData.length;
           chunksToSave.push({
             key: collection.name + ".chunk." + chunkId,
-            value: JSON.stringify(chunkData),
+            value: chunkData,
           });
-        });
+        }
+        dirtyChunks.forEach(prepareChunk);
 
-        collection.data = [];
-        // this is recreated on load anyway, so we can make metadata smaller
-        collection.isIndex = [];
+        // save collection metadata as separate chunk (but only if changed)
+        if (collection.dirty) {
+          // this is recreated on load anyway, so we can make metadata smaller
+          collection.idIndex = [];
+          collection.data = [];
 
-        // save collection metadata as separate chunk, leave only names in loki
-        // TODO: To reduce IO, we should only save this chunk when it has changed
-        chunksToSave.push({
-          key: collection.name + ".metadata",
-          value: JSON.stringify(collection),
-        });
+          var metadataChunk = JSON.stringify(collection);
+          savedLength += metadataChunk.length;
+          chunksToSave.push({
+            key: collection.name + ".metadata",
+            value: metadataChunk,
+          });
+        }
+
+        // leave only names in the loki chunk
         loki.collections[i] = { name: collection.name };
-      });
+      };
+      loki.collections.forEach(prepareCollection);
 
       var serializedMetadata = JSON.stringify(loki);
+      savedLength += serializedMetadata.length;
       loki = null; // allow GC of the DB copy
 
       chunksToSave.push({ key: "loki", value: serializedMetadata });
 
+      console.log(`[Loki] Saving ${savedLength} bytes(ish) to DB`);
       that._saveChunks(dbname, chunksToSave, callback);
     };
 
@@ -286,6 +309,7 @@
     };
 
     IncrementalIndexedDBAdapter.prototype._populate = function(loki, chunkCollections) {
+      var that = this;
       loki.collections.forEach(function(collectionStub, i) {
         var chunkCollection = chunkCollections[collectionStub.name];
 
@@ -301,6 +325,10 @@
             var chunk = JSON.parse(chunkObj);
             chunkObj = null; // make string available for GC
             dataChunks[i] = null;
+
+            if (that.options.deserializeChunk) {
+              chunk = that.options.deserializeChunk(collection.name, chunk);
+            }
 
             chunk.forEach(function(doc) {
               collection.data.push(doc);
@@ -443,6 +471,10 @@
         that.operationInProgress = false;
         callback(e);
       };
+
+      if (this.options.onFetchStart) {
+        this.options.onFetchStart();
+      }
     };
 
     /**

@@ -534,6 +534,10 @@
         return b.indexOf(a) !== -1;
       },
 
+      $inSet: function(a, b) {
+        return b.has(a);
+      },
+
       $nin: function (a, b) {
         return b.indexOf(a) === -1;
       },
@@ -1128,7 +1132,7 @@
       options = options || {};
 
       // currently inverting and letting loadJSONObject do most of the work
-      databaseCopy.loadJSONObject(this, { retainDirtyFlags: true });
+      databaseCopy.loadJSONObject(this, { retainDirtyFlags: true, skipUniqueIndicies: true });
 
       // since our JSON serializeReplacer is not invoked for reference database adapters, this will let us mimic
       if (options.hasOwnProperty("removeNonSerializable") && options.removeNonSerializable === true) {
@@ -1706,6 +1710,7 @@
      * @param {object} dbObject - a serialized loki database string
      * @param {object=} options - apply or override collection level settings
      * @param {bool} options.retainDirtyFlags - whether collection dirty flags will be preserved
+     * @param {bool} options.skipUniqueIndicies - skip regenerating unique indicies
      * @memberof Loki
      */
     Loki.prototype.loadJSONObject = function (dbObject, options) {
@@ -1810,8 +1815,11 @@
         copyColl.uniqueNames = [];
         if (coll.hasOwnProperty("uniqueNames")) {
           copyColl.uniqueNames = coll.uniqueNames;
-          for (j = 0; j < copyColl.uniqueNames.length; j++) {
-            copyColl.ensureUniqueIndex(copyColl.uniqueNames[j]);
+
+          if (!options.skipUniqueIndicies) {
+            for (j = 0; j < copyColl.uniqueNames.length; j++) {
+              copyColl.ensureUniqueIndex(copyColl.uniqueNames[j]);
+            }
           }
         }
 
@@ -2726,24 +2734,17 @@
         return;
       }
 
-      // persistenceAdapter might be asynchronous, so we must clear `dirty` immediately
-      // or autosave won't work if an update occurs between here and the callback
-      // TODO: This should be stored and rolled back in case of DB save failure
-      // TODO: Reference mode adapter should have the same behavior
-      if (this.persistenceAdapter.mode !== "reference") {
-        this.autosaveClearFlags();
-      }
-
       // run incremental, reference, or normal mode adapters, depending on what's available
       if (this.persistenceAdapter.mode === "incremental") {
         var lokiCopy = this.copy({ removeNonSerializable: true });
 
         // remember and clear dirty ids -- we must do it before the save so that if
         // and update occurs between here and callback, it will get saved later
-        var cachedDirtyIds = this.collections.map(function (collection) {
-          return collection.dirtyIds;
+        var cachedDirty = this.collections.map(function (collection) {
+          return [collection.dirty, collection.dirtyIds];
         });
         this.collections.forEach(function (col) {
+          col.dirty = false;
           col.dirtyIds = [];
         });
 
@@ -2751,13 +2752,15 @@
           if (err) {
             // roll back dirty IDs to be saved later
             self.collections.forEach(function (col, i) {
-              col.dirtyIds = col.dirtyIds.concat(cachedDirtyIds[i]);
+              var cached = cachedDirtyIds[i];
+              col.dirty = cached[0]
+              col.dirtyIds = col.dirtyIds.concat(cached[1]);
             });
           }
           cFun(err);
         });
-
       } else if (this.persistenceAdapter.mode === "reference" && typeof this.persistenceAdapter.exportDatabase === "function") {
+        // TODO: dirty should be cleared here
         // filename may seem redundant but loadDatabase will need to expect this same filename
         this.persistenceAdapter.exportDatabase(this.filename, this.copy({ removeNonSerializable: true }), function exportDatabaseCallback(err) {
           self.autosaveClearFlags();
@@ -2766,6 +2769,10 @@
       }
       // otherwise just pass the serialized database to adapter
       else {
+        // persistenceAdapter might be asynchronous, so we must clear `dirty` immediately
+        // or autosave won't work if an update occurs between here and the callback
+        // TODO: This should be stored and rolled back in case of DB save failure
+        this.autosaveClearFlags();
         this.persistenceAdapter.saveDatabase(this.filename, this.serialize(), function saveDatabasecallback(err) {
           cFun(err);
         });
@@ -3546,6 +3553,12 @@
 
         searchByIndex = true;
         index = this.collection.binaryIndices[property];
+      }
+
+      if (!searchByIndex && operator === '$in' && Array.isArray(value)
+        && typeof window !== undefined && typeof window.Set !== 'undefined') {
+        value = new Set(value)
+        operator = '$inSet'
       }
 
       // the comparison function
