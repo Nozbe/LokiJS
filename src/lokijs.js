@@ -2393,11 +2393,7 @@
      * @constructor LokiFsAdapter
      */
     function LokiFsAdapter() {
-      try {
-        this.fs = require('fs');
-      } catch (e) {
-        this.fs = null;
-      }
+      this.fs = null;
     }
 
     /**
