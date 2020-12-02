@@ -1,15 +1,18 @@
 {
-  "name": "lokijs",
-  "version": "1.5.11",
-  "description": "Fast document oriented javascript in-memory database",
+  "name": "@nozbe/lokijs",
+  "version": "1.5.11-wmelon-idb-fix",
+  "description": "Nozbe's temporary fork of LokiJS - used for WatermelonDB purposes to work around NPM issues",
   "homepage": "https://techfort.github.io/LokiJS/",
   "main": "src/lokijs.js",
   "directories": {
     "example": "examples"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/techfort/LokiJS.git"
+    "url": "https://github.com/Nozbe/LokiJS.git"
   },
   "keywords": [
     "javascript",
@@ -30,8 +33,8 @@
     "build:lokijs": "uglifyjs src/lokijs.js > build/lokijs.min.js",
     "build:indexedAdapter": "uglifyjs src/loki-indexed-adapter.js > build/loki-indexed-adapter.min.js",
     "build": "npm run build:lokijs && npm run build:indexedAdapter",
-    "postbuild": "karma start karma.build.conf.js --single-run",
-    "prepublish": "npm run build",
+    "postbuild": "",
+    "prepublish": "",
     "clean": "rimraf build/* coverage/* node_modules",
     "pour:beer": "echo New npm version published, one beer for you !",
     "jsdoc": "./node_modules/.bin/jsdoc -c jsdoc-conf.json",
