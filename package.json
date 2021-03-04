@@ -3,7 +3,7 @@
   "version": "1.5.12-wmelon",
   "description": "Nozbe's temporary fork of LokiJS - used for WatermelonDB purposes to work around NPM issues",
   "homepage": "https://techfort.github.io/LokiJS/",
-  "main": "src/lokijs.js",
+  "main": "src/lokijs.wmelon.js",
   "directories": {
     "example": "examples"
   },
@@ -31,6 +31,7 @@
     "pretest": "npm run lint",
     "test": "npm run test:browser && npm run test:node",
     "build:lokijs": "uglifyjs src/lokijs.js > build/lokijs.min.js",
+    "build:wmelon": "./watermelonSkipper && uglifyjs src/lokijs.wmelon.js > build/lokijs.wmelon.min.js",
     "build:indexedAdapter": "uglifyjs src/loki-indexed-adapter.js > build/loki-indexed-adapter.min.js",
     "build": "npm run build:lokijs && npm run build:indexedAdapter",
     "postbuild": "",

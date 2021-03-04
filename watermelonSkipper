@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+const fs = require('fs')
+const path = require('path')
+
+console.log('Preparing Watermelon build of LokiJS...')
+const loki = fs.readFileSync(path.join(__dirname, 'src/lokijs.js')).toString('utf8')
+
+function transform(code) {
+  return code.replace(
+    /\/\/ wmelon-skip-start.*?\/\/ wmelon-skip-end/gs,
+    '\n// (Code skipped for WatermelonDB build)\n'
+  )
+}
+
+const transformed = transform(loki)
+
+fs.writeFileSync(path.join(__dirname, 'src/lokijs.wmelon.js'), transformed)
+
+console.log('Done.')
