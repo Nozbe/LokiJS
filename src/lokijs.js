@@ -5972,11 +5972,13 @@
 
       // update meta and store changes if ChangesAPI is enabled
       // (moved from "insert" event listener to allow internal reference to be used)
+      // wmelon-skip-start
       if (this.disableChangesApi) {
         this.insertMeta(obj);
       } else {
         this.insertMetaWithChange(obj);
       }
+      // wmelon-skip-end
 
       if (!this.disableFreeze) {
         deepFreeze(obj);
@@ -6133,11 +6135,13 @@
         this.dirty = true; // for autosave scenarios
 
         // update meta and store changes if ChangesAPI is enabled
+        // wmelon-skip-start
         if (this.disableChangesApi) {
           newInternal = this.updateMeta(newInternal);
         } else {
           newInternal = this.updateMetaWithChange(newInternal, oldInternal);
         }
+        // wmelon-skip-end
 
         if (!this.disableFreeze) {
           deepFreeze(newInternal);

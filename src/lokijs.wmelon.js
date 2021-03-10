@@ -59,7 +59,7 @@
           dest[prop] = src[prop];
         }
       },
-      
+
 // (Code skipped for WatermelonDB build)
 
 
@@ -330,7 +330,7 @@
       // not lt, not gt so implied equality-- date compatible
       return 0;
     }
-    
+
 // (Code skipped for WatermelonDB build)
 
     /**
@@ -650,7 +650,7 @@
         case "parse-stringify":
           cloned = JSON.parse(JSON.stringify(data));
           break;
-        
+
 // (Code skipped for WatermelonDB build)
 
         default:
@@ -671,7 +671,7 @@
       return result;
     }
 
-    
+
 // (Code skipped for WatermelonDB build)
 
 
@@ -850,13 +850,13 @@
         'warning': []
       };
 
-      
+
 // (Code skipped for WatermelonDB build)
 
 
       this.configureOptions(options, true);
 
-      
+
 // (Code skipped for WatermelonDB build)
 
     }
@@ -867,7 +867,7 @@
 
     // experimental support for browserify's abstract syntax scan to pick up dependency of indexed adapter.
     // Hopefully, once this hits npm a browserify require of lokijs should scan the main file and detect this indexed adapter reference.
-    
+
 // (Code skipped for WatermelonDB build)
 
 
@@ -895,7 +895,7 @@
         'MEMORY': 'memory'
       },
         persistenceMethods = {
-          
+
 // (Code skipped for WatermelonDB build)
 
           'memory': LokiMemoryAdapter
@@ -1037,7 +1037,7 @@
       var i,
         len = this.collections.length;
 
-      
+
 // (Code skipped for WatermelonDB build)
 
 
@@ -1101,7 +1101,7 @@
 
       return c;
     };
-    
+
 // (Code skipped for WatermelonDB build)
 
     /**
@@ -1176,7 +1176,7 @@
 
     // alias of serialize
     Loki.prototype.toJson = Loki.prototype.serialize;
-    
+
 // (Code skipped for WatermelonDB build)
 
     /**
@@ -1314,7 +1314,7 @@
           copyColl.uniqueNames = coll.uniqueNames;
         }
 
-        
+
 // (Code skipped for WatermelonDB build)
 
 
@@ -1351,7 +1351,7 @@
       this.emit('close');
     };
 
-    
+
 // (Code skipped for WatermelonDB build)
 
     /*------------------+
@@ -1473,7 +1473,7 @@
         callback();
       }
     };
-    
+
 // (Code skipped for WatermelonDB build)
 
     /**
@@ -2011,7 +2011,7 @@
      * @memberof Resultset
      */
     Resultset.prototype.branch = Resultset.prototype.copy;
-    
+
 // (Code skipped for WatermelonDB build)
 
     /**
@@ -2044,7 +2044,7 @@
 
       return this;
     };
-    
+
 // (Code skipped for WatermelonDB build)
 
     /**
@@ -2602,7 +2602,7 @@
 
       return this;
     };
-    
+
 // (Code skipped for WatermelonDB build)
 
     /**
@@ -2632,7 +2632,7 @@
 
       return this;
     };
-    
+
 // (Code skipped for WatermelonDB build)
 
 
@@ -2708,7 +2708,7 @@
         });
       }
 
-      
+
 // (Code skipped for WatermelonDB build)
 
 
@@ -2749,7 +2749,7 @@
       // option to deep freeze all documents
       this.disableFreeze = options.hasOwnProperty('disableFreeze') ? options.disableFreeze : true;
 
-      
+
 // (Code skipped for WatermelonDB build)
 
 
@@ -2793,21 +2793,21 @@
         this.ensureIndex(indices[idx]);
       }
 
-      
+
 // (Code skipped for WatermelonDB build)
 
 
       this.on('warning', function (warning) {
         self.lokiConsoleWrapper.warn(warning);
       });
-      
+
 // (Code skipped for WatermelonDB build)
 
     }
 
     Collection.prototype = new LokiEventEmitter();
     Collection.prototype.contructor = Collection;
-    
+
 // (Code skipped for WatermelonDB build)
 
     Collection.prototype.lokiConsoleWrapper = {
@@ -2817,18 +2817,18 @@
     };
 
     Collection.prototype.addAutoUpdateObserver = function (object) {
-      
+
 // (Code skipped for WatermelonDB build)
 
     };
 
     Collection.prototype.removeAutoUpdateObserver = function (object) {
-      
+
 // (Code skipped for WatermelonDB build)
 
     };
 
-    
+
 // (Code skipped for WatermelonDB build)
 
     /*----------------------------+
@@ -3179,7 +3179,7 @@
       }
       this.idIndex = index;
     };
-    
+
 // (Code skipped for WatermelonDB build)
 
     /**
@@ -3319,11 +3319,9 @@
 
       // update meta and store changes if ChangesAPI is enabled
       // (moved from "insert" event listener to allow internal reference to be used)
-      if (this.disableChangesApi) {
-        this.insertMeta(obj);
-      } else {
-        this.insertMetaWithChange(obj);
-      }
+
+// (Code skipped for WatermelonDB build)
+
 
       if (!this.disableFreeze) {
         deepFreeze(obj);
@@ -3480,11 +3478,9 @@
         this.dirty = true; // for autosave scenarios
 
         // update meta and store changes if ChangesAPI is enabled
-        if (this.disableChangesApi) {
-          newInternal = this.updateMeta(newInternal);
-        } else {
-          newInternal = this.updateMetaWithChange(newInternal, oldInternal);
-        }
+
+// (Code skipped for WatermelonDB build)
+
 
         if (!this.disableFreeze) {
           deepFreeze(newInternal);
@@ -4470,26 +4466,26 @@
 
     /** start the transation */
     Collection.prototype.startTransaction = function () {
-      
+
 // (Code skipped for WatermelonDB build)
 
     };
 
     /** commit the transation */
     Collection.prototype.commit = function () {
-      
+
 // (Code skipped for WatermelonDB build)
 
     };
 
     /** roll back the transation */
     Collection.prototype.rollback = function () {
-      
+
 // (Code skipped for WatermelonDB build)
 
     };
 
-    
+
 // (Code skipped for WatermelonDB build)
 
     /**
@@ -4506,13 +4502,13 @@
     Collection.prototype.where = function (fun) {
       return this.chain().where(fun).data();
     };
-    
+
 // (Code skipped for WatermelonDB build)
 
-    
+
 // (Code skipped for WatermelonDB build)
 
-    
+
 // (Code skipped for WatermelonDB build)
 
     function UniqueIndex(uniqueField) {
@@ -4569,7 +4565,7 @@
       this.keyMap = Object.create(null);
       this.lokiMap = Object.create(null);
     };
-    
+
 // (Code skipped for WatermelonDB build)
 
     Loki.deepFreeze = deepFreeze;
@@ -4577,15 +4573,15 @@
     Loki.unFreeze = unFreeze;
     Loki.LokiOps = LokiOps;
     Loki.Collection = Collection;
-    
+
 // (Code skipped for WatermelonDB build)
 
     Loki.Resultset = Resultset;
-    
+
 // (Code skipped for WatermelonDB build)
 
     Loki.LokiMemoryAdapter = LokiMemoryAdapter;
-    
+
 // (Code skipped for WatermelonDB build)
 
     Loki.aeq = aeqHelper;
