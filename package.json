@@ -1,6 +1,6 @@
 {
   "name": "@nozbe/lokijs",
-  "version": "1.5.12-wmelon",
+  "version": "1.5.12-wmelon2",
   "description": "Nozbe's fork of LokiJS, optimized for WatermelonDB",
   "homepage": "https://techfort.github.io/LokiJS/",
   "main": "src/lokijs.wmelon.js",
@@ -52,7 +52,6 @@
   "bugs": {
     "url": "https://github.com/techfort/LokiJS/issues"
   },
-  "dependencies": {},
   "devDependencies": {
     "istanbul": "^0.4.4",
     "jasmine": "^2.4.1",
