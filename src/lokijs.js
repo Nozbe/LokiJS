@@ -370,7 +370,7 @@
       // not lt, not gt so implied equality-- date compatible
       return 0;
     }
-    // wmelon-skip-start
+
     /**
      * compoundeval() - helper function for compoundsort(), performing individual object comparisons
      *
@@ -400,7 +400,7 @@
       }
       return 0;
     }
-    // wmelon-skip-end
+
     /**
      * dotSubScan - helper function used for dot notation queries.
      *

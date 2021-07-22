@@ -330,8 +330,36 @@
       // not lt, not gt so implied equality-- date compatible
       return 0;
     }
-    
-// (Code skipped for WatermelonDB build)
+
+    /**
+     * compoundeval() - helper function for compoundsort(), performing individual object comparisons
+     *
+     * @param {array} properties - array of property names, in order, by which to evaluate sort order
+     * @param {object} obj1 - first object to compare
+     * @param {object} obj2 - second object to compare
+     * @returns {integer} 0, -1, or 1 to designate if identical (sortwise) or which should be first
+     */
+    function compoundeval(properties, obj1, obj2) {
+      var res = 0;
+      var prop, field, val1, val2, arr, path;
+      for (var i = 0, len = properties.length; i < len; i++) {
+        prop = properties[i];
+        field = prop[0];
+        if (~field.indexOf('.')) {
+          arr = field.split('.');
+          val1 = Utils.getIn(obj1, arr, true);
+          val2 = Utils.getIn(obj2, arr, true);
+        } else {
+          val1 = obj1[field];
+          val2 = obj2[field];
+        }
+        res = sortHelper(val1, val2, prop[1]);
+        if (res !== 0) {
+          return res;
+        }
+      }
+      return 0;
+    }
 
     /**
      * dotSubScan - helper function used for dot notation queries.

@@ -24,6 +24,10 @@
     "in-memory",
     "indexeddb"
   ],
+  "files": [
+    "src",
+    "build"
+  ],
   "scripts": {
     "lint": "jshint src",
     "test:browser": "karma start karma.conf.js --single-run",
