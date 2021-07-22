@@ -59,7 +59,7 @@
           dest[prop] = src[prop];
         }
       },
-
+      
 // (Code skipped for WatermelonDB build)
 
 
@@ -330,7 +330,7 @@
       // not lt, not gt so implied equality-- date compatible
       return 0;
     }
-
+    
 // (Code skipped for WatermelonDB build)
 
     /**
@@ -650,7 +650,7 @@
         case "parse-stringify":
           cloned = JSON.parse(JSON.stringify(data));
           break;
-
+        
 // (Code skipped for WatermelonDB build)
 
         default:
@@ -671,7 +671,7 @@
       return result;
     }
 
-
+    
 // (Code skipped for WatermelonDB build)
 
 
@@ -850,13 +850,13 @@
         'warning': []
       };
 
-
+      
 // (Code skipped for WatermelonDB build)
 
 
       this.configureOptions(options, true);
 
-
+      
 // (Code skipped for WatermelonDB build)
 
     }
@@ -867,7 +867,7 @@
 
     // experimental support for browserify's abstract syntax scan to pick up dependency of indexed adapter.
     // Hopefully, once this hits npm a browserify require of lokijs should scan the main file and detect this indexed adapter reference.
-
+    
 // (Code skipped for WatermelonDB build)
 
 
@@ -895,7 +895,7 @@
         'MEMORY': 'memory'
       },
         persistenceMethods = {
-
+          
 // (Code skipped for WatermelonDB build)
 
           'memory': LokiMemoryAdapter
@@ -1037,7 +1037,7 @@
       var i,
         len = this.collections.length;
 
-
+      
 // (Code skipped for WatermelonDB build)
 
 
@@ -1101,7 +1101,7 @@
 
       return c;
     };
-
+    
 // (Code skipped for WatermelonDB build)
 
     /**
@@ -1176,7 +1176,7 @@
 
     // alias of serialize
     Loki.prototype.toJson = Loki.prototype.serialize;
-
+    
 // (Code skipped for WatermelonDB build)
 
     /**
@@ -1314,7 +1314,7 @@
           copyColl.uniqueNames = coll.uniqueNames;
         }
 
-
+        
 // (Code skipped for WatermelonDB build)
 
 
@@ -1351,7 +1351,7 @@
       this.emit('close');
     };
 
-
+    
 // (Code skipped for WatermelonDB build)
 
     /*------------------+
@@ -1473,7 +1473,7 @@
         callback();
       }
     };
-
+    
 // (Code skipped for WatermelonDB build)
 
     /**
@@ -2011,7 +2011,7 @@
      * @memberof Resultset
      */
     Resultset.prototype.branch = Resultset.prototype.copy;
-
+    
 // (Code skipped for WatermelonDB build)
 
     /**
@@ -2045,7 +2045,187 @@
       return this;
     };
 
-// (Code skipped for WatermelonDB build)
+    /**
+     * Simpler, loose evaluation for user to sort based on a property name. (chainable).
+     *    Sorting based on the same lt/gt helper functions used for binary indices.
+     *
+     * @param {string} propname - name of property to sort by.
+     * @param {object|bool=} options - boolean to specify if isdescending, or options object
+     * @param {boolean} [options.desc=false] - whether to sort descending
+     * @param {boolean} [options.disableIndexIntersect=false] - whether we should explicity not use array intersection.
+     * @param {boolean} [options.forceIndexIntersect=false] - force array intersection (if binary index exists).
+     * @param {boolean} [options.useJavascriptSorting=false] - whether results are sorted via basic javascript sort.
+     * @returns {Resultset} Reference to this resultset, sorted, for future chain operations.
+     * @memberof Resultset
+     * @example
+     * var results = users.chain().simplesort('age').data();
+     */
+    Resultset.prototype.simplesort = function (propname, options) {
+      var eff,
+        targetEff = 10,
+        dc = this.collection.data.length,
+        frl = this.filteredrows.length,
+        hasBinaryIndex = this.collection.binaryIndices.hasOwnProperty(propname);
+
+      if (typeof (options) === 'undefined' || options === false) {
+        options = { desc: false };
+      }
+      if (options === true) {
+        options = { desc: true };
+      }
+
+      // if nothing in filtered rows array...
+      if (frl === 0) {
+        // if the filter is initialized to be empty resultset, do nothing
+        if (this.filterInitialized) {
+          return this;
+        }
+
+        // otherwise no filters applied implies all documents, so we need to populate filteredrows first
+
+        // if we have a binary index, we can just use that instead of sorting (again)
+        if (this.collection.binaryIndices.hasOwnProperty(propname)) {
+          // make sure index is up-to-date
+          this.collection.ensureIndex(propname);
+          // copy index values into filteredrows
+          this.filteredrows = this.collection.binaryIndices[propname].values.slice(0);
+
+          if (options.desc) {
+            this.filteredrows.reverse();
+          }
+
+          // we are done, return this (resultset) for further chain ops
+          return this;
+        }
+        // otherwise initialize array for sort below
+        else {
+          // build full document index (to be sorted subsequently)
+          this.filteredrows = this.collection.prepareFullDocIndex();
+        }
+      }
+      // otherwise we had results to begin with, see if we qualify for index intercept optimization
+      else {
+
+        // If already filtered, but we want to leverage binary index on sort.
+        // This will use custom array intection algorithm.
+        if (!options.disableIndexIntersect && hasBinaryIndex) {
+
+          // calculate filter efficiency
+          eff = dc / frl;
+
+          // when javascript sort fallback is enabled, you generally need more than ~17% of total docs in resultset
+          // before array intersect is determined to be the faster algorithm, otherwise leave at 10% for loki sort.
+          if (options.useJavascriptSorting) {
+            targetEff = 6;
+          }
+
+          // anything more than ratio of 10:1 (total documents/current results) should use old sort code path
+          // So we will only use array intersection if you have more than 10% of total docs in your current resultset.
+          if (eff <= targetEff || options.forceIndexIntersect) {
+            var idx, fr = this.filteredrows;
+            var io = {};
+            // set up hashobject for simple 'inclusion test' with existing (filtered) results
+            for (idx = 0; idx < frl; idx++) {
+              io[fr[idx]] = true;
+            }
+            // grab full sorted binary index array
+            var pv = this.collection.binaryIndices[propname].values;
+
+            // filter by existing results
+            this.filteredrows = pv.filter(function (n) { return io[n]; });
+
+            if (options.desc) {
+              this.filteredrows.reverse();
+            }
+
+            return this;
+          }
+        }
+      }
+
+      // at this point, we will not be able to leverage binary index so we will have to do an array sort
+
+      // if we have opted to use simplified javascript comparison function...
+      if (options.useJavascriptSorting) {
+        return this.sort(function (obj1, obj2) {
+          if (obj1[propname] === obj2[propname]) return 0;
+          if (obj1[propname] > obj2[propname]) return 1;
+          if (obj1[propname] < obj2[propname]) return -1;
+        });
+      }
+
+      // otherwise use loki sort which will return same results if column is indexed or not
+      var wrappedComparer =
+        (function (prop, desc, data) {
+          var val1, val2, arr;
+          return function (a, b) {
+            if (~prop.indexOf('.')) {
+              arr = prop.split('.');
+              val1 = Utils.getIn(data[a], arr, true);
+              val2 = Utils.getIn(data[b], arr, true);
+            } else {
+              val1 = data[a][prop];
+              val2 = data[b][prop];
+            }
+            return sortHelper(val1, val2, desc);
+          };
+        })(propname, options.desc, this.collection.data);
+
+      this.filteredrows.sort(wrappedComparer);
+
+      return this;
+    };
+
+    /**
+     * Allows sorting a resultset based on multiple columns.
+     * @example
+     * // to sort by age and then name (both ascending)
+     * rs.compoundsort(['age', 'name']);
+     * // to sort by age (ascending) and then by name (descending)
+     * rs.compoundsort(['age', ['name', true]]);
+     *
+     * @param {array} properties - array of property names or subarray of [propertyname, isdesc] used evaluate sort order
+     * @returns {Resultset} Reference to this resultset, sorted, for future chain operations.
+     * @memberof Resultset
+     */
+    Resultset.prototype.compoundsort = function (properties) {
+      if (properties.length === 0) {
+        throw new Error("Invalid call to compoundsort, need at least one property");
+      }
+
+      var prop;
+      if (properties.length === 1) {
+        prop = properties[0];
+        if (Array.isArray(prop)) {
+          return this.simplesort(prop[0], prop[1]);
+        }
+        return this.simplesort(prop, false);
+      }
+
+      // unify the structure of 'properties' to avoid checking it repeatedly while sorting
+      for (var i = 0, len = properties.length; i < len; i += 1) {
+        prop = properties[i];
+        if (!Array.isArray(prop)) {
+          properties[i] = [prop, false];
+        }
+      }
+
+      // if this has no filters applied, just we need to populate filteredrows first
+      if (!this.filterInitialized && this.filteredrows.length === 0) {
+        this.filteredrows = this.collection.prepareFullDocIndex();
+      }
+
+      var wrappedComparer =
+        (function (props, data) {
+          return function (a, b) {
+            return compoundeval(props, data[a], data[b]);
+          };
+        })(properties, this.collection.data);
+
+      this.filteredrows.sort(wrappedComparer);
+
+      return this;
+    };
 
     /**
      * findOr() - oversee the operation of OR'ed query expressions.
@@ -2602,7 +2782,7 @@
 
       return this;
     };
-
+    
 // (Code skipped for WatermelonDB build)
 
     /**
@@ -2632,7 +2812,7 @@
 
       return this;
     };
-
+    
 // (Code skipped for WatermelonDB build)
 
 
@@ -2708,7 +2888,7 @@
         });
       }
 
-
+      
 // (Code skipped for WatermelonDB build)
 
 
@@ -2749,7 +2929,7 @@
       // option to deep freeze all documents
       this.disableFreeze = options.hasOwnProperty('disableFreeze') ? options.disableFreeze : true;
 
-
+      
 // (Code skipped for WatermelonDB build)
 
 
@@ -2793,21 +2973,21 @@
         this.ensureIndex(indices[idx]);
       }
 
-
+      
 // (Code skipped for WatermelonDB build)
 
 
       this.on('warning', function (warning) {
         self.lokiConsoleWrapper.warn(warning);
       });
-
+      
 // (Code skipped for WatermelonDB build)
 
     }
 
     Collection.prototype = new LokiEventEmitter();
     Collection.prototype.contructor = Collection;
-
+    
 // (Code skipped for WatermelonDB build)
 
     Collection.prototype.lokiConsoleWrapper = {
@@ -2817,18 +2997,18 @@
     };
 
     Collection.prototype.addAutoUpdateObserver = function (object) {
-
+      
 // (Code skipped for WatermelonDB build)
 
     };
 
     Collection.prototype.removeAutoUpdateObserver = function (object) {
-
+      
 // (Code skipped for WatermelonDB build)
 
     };
 
-
+    
 // (Code skipped for WatermelonDB build)
 
     /*----------------------------+
@@ -3179,7 +3359,7 @@
       }
       this.idIndex = index;
     };
-
+    
 // (Code skipped for WatermelonDB build)
 
     /**
@@ -3319,7 +3499,7 @@
 
       // update meta and store changes if ChangesAPI is enabled
       // (moved from "insert" event listener to allow internal reference to be used)
-
+      
 // (Code skipped for WatermelonDB build)
 
 
@@ -3478,7 +3658,7 @@
         this.dirty = true; // for autosave scenarios
 
         // update meta and store changes if ChangesAPI is enabled
-
+        
 // (Code skipped for WatermelonDB build)
 
 
@@ -4466,26 +4646,26 @@
 
     /** start the transation */
     Collection.prototype.startTransaction = function () {
-
+      
 // (Code skipped for WatermelonDB build)
 
     };
 
     /** commit the transation */
     Collection.prototype.commit = function () {
-
+      
 // (Code skipped for WatermelonDB build)
 
     };
 
     /** roll back the transation */
     Collection.prototype.rollback = function () {
-
+      
 // (Code skipped for WatermelonDB build)
 
     };
 
-
+    
 // (Code skipped for WatermelonDB build)
 
     /**
@@ -4502,13 +4682,13 @@
     Collection.prototype.where = function (fun) {
       return this.chain().where(fun).data();
     };
-
+    
 // (Code skipped for WatermelonDB build)
 
-
+    
 // (Code skipped for WatermelonDB build)
 
-
+    
 // (Code skipped for WatermelonDB build)
 
     function UniqueIndex(uniqueField) {
@@ -4565,7 +4745,7 @@
       this.keyMap = Object.create(null);
       this.lokiMap = Object.create(null);
     };
-
+    
 // (Code skipped for WatermelonDB build)
 
     Loki.deepFreeze = deepFreeze;
@@ -4573,15 +4753,15 @@
     Loki.unFreeze = unFreeze;
     Loki.LokiOps = LokiOps;
     Loki.Collection = Collection;
-
+    
 // (Code skipped for WatermelonDB build)
 
     Loki.Resultset = Resultset;
-
+    
 // (Code skipped for WatermelonDB build)
 
     Loki.LokiMemoryAdapter = LokiMemoryAdapter;
-
+    
 // (Code skipped for WatermelonDB build)
 
     Loki.aeq = aeqHelper;

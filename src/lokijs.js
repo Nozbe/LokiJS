@@ -3190,7 +3190,7 @@
 
       return this;
     };
-    // wmelon-skip-start
+
     /**
      * Simpler, loose evaluation for user to sort based on a property name. (chainable).
      *    Sorting based on the same lt/gt helper functions used for binary indices.
@@ -3372,7 +3372,7 @@
 
       return this;
     };
-    // wmelon-skip-end
+
     /**
      * findOr() - oversee the operation of OR'ed query expressions.
      *    OR'ed expression evaluation runs each expression individually against the full collection,
