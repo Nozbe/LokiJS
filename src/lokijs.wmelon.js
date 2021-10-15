@@ -59,49 +59,9 @@
           dest[prop] = src[prop];
         }
       },
-      // wmelon-skip-start
-      // used to recursively scan hierarchical transform step object for param substitution
-      resolveTransformObject: function (subObj, params, depth) {
-        var prop,
-          pname;
+      
+// (Code skipped for WatermelonDB build)
 
-        if (typeof depth !== 'number') {
-          depth = 0;
-        }
-
-        if (++depth >= 10) return subObj;
-
-        for (prop in subObj) {
-          if (typeof subObj[prop] === 'string' && subObj[prop].indexOf("[%lktxp]") === 0) {
-            pname = subObj[prop].substring(8);
-            if (params.hasOwnProperty(pname)) {
-              subObj[prop] = params[pname];
-            }
-          } else if (typeof subObj[prop] === "object") {
-            subObj[prop] = Utils.resolveTransformObject(subObj[prop], params, depth);
-          }
-        }
-
-        return subObj;
-      },
-      // top level utility to resolve an entire (single) transform (array of steps) for parameter substitution
-      resolveTransformParams: function (transform, params) {
-        var idx,
-          clonedStep,
-          resolvedTransform = [];
-
-        if (typeof params === 'undefined') return transform;
-
-        // iterate all steps in the transform array
-        for (idx = 0; idx < transform.length; idx++) {
-          // clone transform so our scan/replace can operate directly on cloned transform
-          clonedStep = clone(transform[idx], "shallow-recurse-objects");
-          resolvedTransform.push(Utils.resolveTransformObject(clonedStep, params));
-        }
-
-        return resolvedTransform;
-      },
-      // wmelon-skip-end
 
       // By default (if usingDotNotation is false), looks up path in
       // object via `object[path]`
@@ -718,36 +678,9 @@
         case "parse-stringify":
           cloned = JSON.parse(JSON.stringify(data));
           break;
-        // wmelon-skip-start
-        case "jquery-extend-deep":
-          cloned = jQuery.extend(true, {}, data);
-          break;
-        case "shallow":
-          // more compatible method for older browsers
-          cloned = Object.create(data.constructor.prototype);
-          Object.keys(data).map(function (i) {
-            cloned[i] = data[i];
-          });
-          break;
-        case "shallow-assign":
-          // should be supported by newer environments/browsers
-          cloned = Object.create(data.constructor.prototype);
-          Object.assign(cloned, data);
-          break;
-        case "shallow-recurse-objects":
-          // shallow clone top level properties
-          cloned = clone(data, "shallow");
-          var keys = Object.keys(data);
-          // for each of the top level properties which are object literals, recursively shallow copy
-          keys.forEach(function (key) {
-            if (typeof data[key] === "object" && data[key].constructor.name === "Object") {
-              cloned[key] = clone(data[key], "shallow-recurse-objects");
-            } else if (Array.isArray(data[key])) {
-              cloned[key] = cloneObjectArray(data[key], "shallow-recurse-objects");
-            }
-          });
-          break;
-        // wmelon-skip-end
+        
+// (Code skipped for WatermelonDB build)
+
         default:
           break;
       }
@@ -766,15 +699,9 @@
       return result;
     }
 
-    // wmelon-skip-start
-    function localStorageAvailable() {
-      try {
-        return (window && window.localStorage !== undefined && window.localStorage !== null);
-      } catch (e) {
-        return false;
-      }
-    }
-    // wmelon-skip-end
+    
+// (Code skipped for WatermelonDB build)
+
 
     /**
      * LokiEventEmitter is a minimalist version of EventEmitter. It enables any
@@ -951,51 +878,15 @@
         'warning': []
       };
 
-      // wmelon-skip-start
-      var getENV = function () {
-        if (typeof global !== 'undefined' && (global.android || global.NSObject)) {
-          // If no adapter assume nativescript which needs adapter to be passed manually
-          return 'NATIVESCRIPT'; //nativescript
-        }
+      
+// (Code skipped for WatermelonDB build)
 
-        if (typeof window === 'undefined') {
-          return 'NODEJS';
-        }
-
-        if (typeof global !== 'undefined' && global.window && typeof process !== 'undefined') {
-          return 'NODEJS'; //node-webkit
-        }
-
-        if (typeof document !== 'undefined') {
-          if (document.URL.indexOf('http://') === -1 && document.URL.indexOf('https://') === -1) {
-            return 'CORDOVA';
-          }
-          return 'BROWSER';
-        }
-        return 'CORDOVA';
-      };
-
-      // refactored environment detection due to invalid detection for browser environments.
-      // if they do not specify an options.env we want to detect env rather than default to nodejs.
-      // currently keeping two properties for similar thing (options.env and options.persistenceMethod)
-      //   might want to review whether we can consolidate.
-      if (options && options.hasOwnProperty('env')) {
-        this.ENV = options.env;
-      } else {
-        this.ENV = getENV();
-      }
-
-      // not sure if this is necessary now that i have refactored the line above
-      if (this.ENV === 'undefined') {
-        this.ENV = 'NODEJS';
-      }
-      // wmelon-skip-end
 
       this.configureOptions(options, true);
 
-      // wmelon-skip-start
-      this.on('init', this.clearChanges);
-      // wmelon-skip-end
+      
+// (Code skipped for WatermelonDB build)
+
     }
 
     // db class is an EventEmitter
@@ -1004,17 +895,9 @@
 
     // experimental support for browserify's abstract syntax scan to pick up dependency of indexed adapter.
     // Hopefully, once this hits npm a browserify require of lokijs should scan the main file and detect this indexed adapter reference.
-    // wmelon-skip-start
-    Loki.prototype.getIndexedAdapter = function () {
-      var adapter;
+    
+// (Code skipped for WatermelonDB build)
 
-      if (typeof require === 'function') {
-        adapter = require("./loki-indexed-adapter.js");
-      }
-
-      return adapter;
-    };
-    // wmelon-skip-end
 
     /**
      * Allows reconfiguring database options
@@ -1040,10 +923,9 @@
         'MEMORY': 'memory'
       },
         persistenceMethods = {
-          // wmelon-skip-start
-          'fs': LokiFsAdapter,
-          'localStorage': LokiLocalStorageAdapter,
-          // wmelon-skip-end
+          
+// (Code skipped for WatermelonDB build)
+
           'memory': LokiMemoryAdapter
         };
 
@@ -1183,19 +1065,9 @@
       var i,
         len = this.collections.length;
 
-      // wmelon-skip-start
-      if (options && options.disableMeta === true) {
-        if (options.disableChangesApi === false) {
-          throw new Error("disableMeta option cannot be passed as true when disableChangesApi is passed as false");
-        }
-        if (options.disableDeltaChangesApi === false) {
-          throw new Error("disableMeta option cannot be passed as true when disableDeltaChangesApi is passed as false");
-        }
-        if (typeof options.ttl === "number" && options.ttl > 0) {
-          throw new Error("disableMeta option cannot be passed as true when ttl is enabled");
-        }
-      }
-      // wmelon-skip-end
+      
+// (Code skipped for WatermelonDB build)
+
 
       for (i = 0; i < len; i += 1) {
         if (this.collections[i].name === name) {
@@ -1257,27 +1129,9 @@
 
       return c;
     };
-    // wmelon-skip-start
-    /**
-     * Returns a list of collections in the database.
-     * @returns {object[]} array of objects containing 'name', 'type', and 'count' properties.
-     * @memberof Loki
-     */
-    Loki.prototype.listCollections = function () {
+    
+// (Code skipped for WatermelonDB build)
 
-      var i = this.collections.length,
-        colls = [];
-
-      while (i--) {
-        colls.push({
-          name: this.collections[i].name,
-          type: this.collections[i].objType,
-          count: this.collections[i].data.length
-        });
-      }
-      return colls;
-    };
-    // wmelon-skip-end
     /**
      * Removes a collection from the database.
      * @param {string} collectionName - name of collection to remove
@@ -1350,347 +1204,9 @@
 
     // alias of serialize
     Loki.prototype.toJson = Loki.prototype.serialize;
-    // wmelon-skip-start
-    /**
-     * Database level destructured JSON serialization routine to allow alternate serialization methods.
-     * Internally, Loki supports destructuring via loki "serializationMethod' option and
-     * the optional LokiPartitioningAdapter class. It is also available if you wish to do
-     * your own structured persistence or data exchange.
-     *
-     * @param {object=} options - output format options for use externally to loki
-     * @param {bool=} options.partitioned - (default: false) whether db and each collection are separate
-     * @param {int=} options.partition - can be used to only output an individual collection or db (-1)
-     * @param {bool=} options.delimited - (default: true) whether subitems are delimited or subarrays
-     * @param {string=} options.delimiter - override default delimiter
-     *
-     * @returns {string|array} A custom, restructured aggregation of independent serializations.
-     * @memberof Loki
-     */
-    Loki.prototype.serializeDestructured = function (options) {
-      var idx, sidx, result, resultlen;
-      var reconstruct = [];
-      var dbcopy;
+    
+// (Code skipped for WatermelonDB build)
 
-      options = options || {};
-
-      if (!options.hasOwnProperty("partitioned")) {
-        options.partitioned = false;
-      }
-
-      if (!options.hasOwnProperty("delimited")) {
-        options.delimited = true;
-      }
-
-      if (!options.hasOwnProperty("delimiter")) {
-        options.delimiter = this.options.destructureDelimiter;
-      }
-
-      // 'partitioned' along with 'partition' of 0 or greater is a request for single collection serialization
-      if (options.partitioned === true && options.hasOwnProperty("partition") && options.partition >= 0) {
-        return this.serializeCollection({
-          delimited: options.delimited,
-          delimiter: options.delimiter,
-          collectionIndex: options.partition
-        });
-      }
-
-      // not just an individual collection, so we will need to serialize db container via shallow copy
-      dbcopy = new Loki(this.filename);
-      dbcopy.loadJSONObject(this);
-
-      for (idx = 0; idx < dbcopy.collections.length; idx++) {
-        dbcopy.collections[idx].data = [];
-      }
-
-      // if we -only- wanted the db container portion, return it now
-      if (options.partitioned === true && options.partition === -1) {
-        // since we are deconstructing, override serializationMethod to normal for here
-        return dbcopy.serialize({
-          serializationMethod: "normal"
-        });
-      }
-
-      // at this point we must be deconstructing the entire database
-      // start by pushing db serialization into first array element
-      reconstruct.push(dbcopy.serialize({
-        serializationMethod: "normal"
-      }));
-
-      dbcopy = null;
-
-      // push collection data into subsequent elements
-      for (idx = 0; idx < this.collections.length; idx++) {
-        result = this.serializeCollection({
-          delimited: options.delimited,
-          delimiter: options.delimiter,
-          collectionIndex: idx
-        });
-
-        // NDA : Non-Delimited Array : one iterable concatenated array with empty string collection partitions
-        if (options.partitioned === false && options.delimited === false) {
-          if (!Array.isArray(result)) {
-            throw new Error("a nondelimited, non partitioned collection serialization did not return an expected array");
-          }
-
-          // Array.concat would probably duplicate memory overhead for copying strings.
-          // Instead copy each individually, and clear old value after each copy.
-          // Hopefully this will allow g.c. to reduce memory pressure, if needed.
-          resultlen = result.length;
-
-          for (sidx = 0; sidx < resultlen; sidx++) {
-            reconstruct.push(result[sidx]);
-            result[sidx] = null;
-          }
-
-          reconstruct.push("");
-        }
-        else {
-          reconstruct.push(result);
-        }
-      }
-
-      // Reconstruct / present results according to four combinations : D, DA, NDA, NDAA
-      if (options.partitioned) {
-        // DA : Delimited Array of strings [0] db [1] collection [n] collection { partitioned: true, delimited: true }
-        // useful for simple future adaptations of existing persistence adapters to save collections separately
-        if (options.delimited) {
-          return reconstruct;
-        }
-        // NDAA : Non-Delimited Array with subArrays. db at [0] and collection subarrays at [n] { partitioned: true, delimited : false }
-        // This format might be the most versatile for 'rolling your own' partitioned sync or save.
-        // Memory overhead can be reduced by specifying a specific partition, but at this code path they did not, so its all.
-        else {
-          return reconstruct;
-        }
-      }
-      else {
-        // D : one big Delimited string { partitioned: false, delimited : true }
-        // This is the method Loki will use internally if 'destructured'.
-        // Little memory overhead improvements but does not require multiple asynchronous adapter call scheduling
-        if (options.delimited) {
-          // indicate no more collections
-          reconstruct.push("");
-
-          return reconstruct.join(options.delimiter);
-        }
-        // NDA : Non-Delimited Array : one iterable array with empty string collection partitions { partitioned: false, delimited: false }
-        // This format might be best candidate for custom synchronous syncs or saves
-        else {
-          // indicate no more collections
-          reconstruct.push("");
-
-          return reconstruct;
-        }
-      }
-
-      reconstruct.push("");
-
-      return reconstruct.join(delim);
-    };
-
-    /**
-     * Collection level utility method to serialize a collection in a 'destructured' format
-     *
-     * @param {object=} options - used to determine output of method
-     * @param {int} options.delimited - whether to return single delimited string or an array
-     * @param {string} options.delimiter - (optional) if delimited, this is delimiter to use
-     * @param {int} options.collectionIndex -  specify which collection to serialize data for
-     *
-     * @returns {string|array} A custom, restructured aggregation of independent serializations for a single collection.
-     * @memberof Loki
-     */
-    Loki.prototype.serializeCollection = function (options) {
-      var doccount,
-        docidx,
-        resultlines = [];
-
-      options = options || {};
-
-      if (!options.hasOwnProperty("delimited")) {
-        options.delimited = true;
-      }
-
-      if (!options.hasOwnProperty("collectionIndex")) {
-        throw new Error("serializeCollection called without 'collectionIndex' option");
-      }
-
-      doccount = this.collections[options.collectionIndex].data.length;
-
-      resultlines = [];
-
-      for (docidx = 0; docidx < doccount; docidx++) {
-        resultlines.push(JSON.stringify(this.collections[options.collectionIndex].data[docidx]));
-      }
-
-      // D and DA
-      if (options.delimited) {
-        // indicate no more documents in collection (via empty delimited string)
-        resultlines.push("");
-
-        return resultlines.join(options.delimiter);
-      }
-      else {
-        // NDAA and NDA
-        return resultlines;
-      }
-    };
-
-    /**
-     * Database level destructured JSON deserialization routine to minimize memory overhead.
-     * Internally, Loki supports destructuring via loki "serializationMethod' option and
-     * the optional LokiPartitioningAdapter class. It is also available if you wish to do
-     * your own structured persistence or data exchange.
-     *
-     * @param {string|array} destructuredSource - destructured json or array to deserialize from
-     * @param {object=} options - source format options
-     * @param {bool=} [options.partitioned=false] - whether db and each collection are separate
-     * @param {int=} options.partition - can be used to deserialize only a single partition
-     * @param {bool=} [options.delimited=true] - whether subitems are delimited or subarrays
-     * @param {string=} options.delimiter - override default delimiter
-     *
-     * @returns {object|array} An object representation of the deserialized database, not yet applied to 'this' db or document array
-     * @memberof Loki
-     */
-    Loki.prototype.deserializeDestructured = function (destructuredSource, options) {
-      var workarray = [];
-      var len, cdb;
-      var idx, collIndex = 0, collCount, lineIndex = 1, done = false;
-      var currLine, currObject;
-
-      options = options || {};
-
-      if (!options.hasOwnProperty("partitioned")) {
-        options.partitioned = false;
-      }
-
-      if (!options.hasOwnProperty("delimited")) {
-        options.delimited = true;
-      }
-
-      if (!options.hasOwnProperty("delimiter")) {
-        options.delimiter = this.options.destructureDelimiter;
-      }
-
-      // Partitioned
-      // DA : Delimited Array of strings [0] db [1] collection [n] collection { partitioned: true, delimited: true }
-      // NDAA : Non-Delimited Array with subArrays. db at [0] and collection subarrays at [n] { partitioned: true, delimited : false }
-      // -or- single partition
-      if (options.partitioned) {
-        // handle single partition
-        if (options.hasOwnProperty('partition')) {
-          // db only
-          if (options.partition === -1) {
-            cdb = JSON.parse(destructuredSource[0]);
-
-            return cdb;
-          }
-
-          // single collection, return doc array
-          return this.deserializeCollection(destructuredSource[options.partition + 1], options);
-        }
-
-        // Otherwise we are restoring an entire partitioned db
-        cdb = JSON.parse(destructuredSource[0]);
-        collCount = cdb.collections.length;
-        for (collIndex = 0; collIndex < collCount; collIndex++) {
-          // attach each collection docarray to container collection data, add 1 to collection array index since db is at 0
-          cdb.collections[collIndex].data = this.deserializeCollection(destructuredSource[collIndex + 1], options);
-        }
-
-        return cdb;
-      }
-
-      // Non-Partitioned
-      // D : one big Delimited string { partitioned: false, delimited : true }
-      // NDA : Non-Delimited Array : one iterable array with empty string collection partitions { partitioned: false, delimited: false }
-
-      // D
-      if (options.delimited) {
-        workarray = destructuredSource.split(options.delimiter);
-        destructuredSource = null; // lower memory pressure
-        len = workarray.length;
-
-        if (len === 0) {
-          return null;
-        }
-      }
-      // NDA
-      else {
-        workarray = destructuredSource;
-      }
-
-      // first line is database and collection shells
-      cdb = JSON.parse(workarray[0]);
-      collCount = cdb.collections.length;
-      workarray[0] = null;
-
-      while (!done) {
-        currLine = workarray[lineIndex];
-
-        // empty string indicates either end of collection or end of file
-        if (workarray[lineIndex] === "") {
-          // if no more collections to load into, we are done
-          if (++collIndex > collCount) {
-            done = true;
-          }
-        }
-        else {
-          currObject = JSON.parse(workarray[lineIndex]);
-          cdb.collections[collIndex].data.push(currObject);
-        }
-
-        // lower memory pressure and advance iterator
-        workarray[lineIndex++] = null;
-      }
-
-      return cdb;
-    };
-
-    /**
-     * Collection level utility function to deserializes a destructured collection.
-     *
-     * @param {string|array} destructuredSource - destructured representation of collection to inflate
-     * @param {object=} options - used to describe format of destructuredSource input
-     * @param {int=} [options.delimited=false] - whether source is delimited string or an array
-     * @param {string=} options.delimiter - if delimited, this is delimiter to use (if other than default)
-     *
-     * @returns {array} an array of documents to attach to collection.data.
-     * @memberof Loki
-     */
-    Loki.prototype.deserializeCollection = function (destructuredSource, options) {
-      var workarray = [];
-      var idx, len;
-
-      options = options || {};
-
-      if (!options.hasOwnProperty("partitioned")) {
-        options.partitioned = false;
-      }
-
-      if (!options.hasOwnProperty("delimited")) {
-        options.delimited = true;
-      }
-
-      if (!options.hasOwnProperty("delimiter")) {
-        options.delimiter = this.options.destructureDelimiter;
-      }
-
-      if (options.delimited) {
-        workarray = destructuredSource.split(options.delimiter);
-        workarray.pop();
-      }
-      else {
-        workarray = destructuredSource;
-      }
-
-      len = workarray.length;
-      for (idx = 0; idx < len; idx++) {
-        workarray[idx] = JSON.parse(workarray[idx]);
-      }
-
-      return workarray;
-    };
-    // wmelon-skip-end
     /**
      * Inflates a loki database from a serialized JSON string
      *
@@ -1787,43 +1303,27 @@
           copyColl.dirty = false;
         }
 
-        if (coll.getData) {
-          if ((options && options.hasOwnProperty(coll.name)) || !copyColl.disableFreeze || copyColl.autoupdate) {
-            throw new Error("this collection cannot be loaded lazily: " + coll.name);
-          }
-          copyColl.getData = coll.getData;
-          Object.defineProperty(copyColl, 'data', {
-            /* jshint loopfunc:true */
-            get: function() {
-              var data = this.getData();
-              this.getData = null;
-              Object.defineProperty(this, 'data', { value: data });
-              return data;
-            }
-            /* jshint loopfunc:false */
-          });
-        } else {
-          // load each element individually
-          clen = coll.data.length;
-          j = 0;
-          if (options && options.hasOwnProperty(coll.name)) {
-            loader = makeLoader(coll);
+        // load each element individually
+        clen = coll.data.length;
+        j = 0;
+        if (options && options.hasOwnProperty(coll.name)) {
+          loader = makeLoader(coll);
 
-            for (j; j < clen; j++) {
-              collObj = loader(coll.data[j]);
-              copyColl.data[j] = collObj;
-              copyColl.addAutoUpdateObserver(collObj);
-              if (!copyColl.disableFreeze) {
-                deepFreeze(copyColl.data[j]);
-              }
+          for (j; j < clen; j++) {
+            collObj = loader(coll.data[j]);
+            copyColl.data[j] = collObj;
+            copyColl.addAutoUpdateObserver(collObj);
+            if (!copyColl.disableFreeze) {
+              deepFreeze(copyColl.data[j]);
             }
-          } else {
-            for (j; j < clen; j++) {
-              copyColl.data[j] = coll.data[j];
-              copyColl.addAutoUpdateObserver(copyColl.data[j]);
-              if (!copyColl.disableFreeze) {
-                deepFreeze(copyColl.data[j]);
-              }
+          }
+        } else {
+
+          for (j; j < clen; j++) {
+            copyColl.data[j] = coll.data[j];
+            copyColl.addAutoUpdateObserver(copyColl.data[j]);
+            if (!copyColl.disableFreeze) {
+              deepFreeze(copyColl.data[j]);
             }
           }
         }
@@ -1842,38 +1342,9 @@
           copyColl.uniqueNames = coll.uniqueNames;
         }
 
-        // wmelon-skip-start
-        // in case they are loading a database created before we added dynamic views, handle undefined
-        if (typeof (coll.DynamicViews) === 'undefined') continue;
+        
+// (Code skipped for WatermelonDB build)
 
-        // reinflate DynamicViews and attached Resultsets
-        for (var idx = 0; idx < coll.DynamicViews.length; idx++) {
-          var colldv = coll.DynamicViews[idx];
-
-          var dv = copyColl.addDynamicView(colldv.name, colldv.options);
-          dv.resultdata = colldv.resultdata;
-          dv.resultsdirty = colldv.resultsdirty;
-          dv.filterPipeline = colldv.filterPipeline;
-          dv.sortCriteriaSimple = colldv.sortCriteriaSimple;
-          dv.sortCriteria = colldv.sortCriteria;
-          dv.sortFunction = null;
-          dv.sortDirty = colldv.sortDirty;
-          if (!copyColl.disableFreeze) {
-            deepFreeze(dv.filterPipeline);
-            if (dv.sortCriteriaSimple) {
-              deepFreeze(dv.sortCriteriaSimple);
-            } else if (dv.sortCriteria) {
-              deepFreeze(dv.sortCriteria);
-            }
-          }
-          dv.resultset.filteredrows = colldv.resultset.filteredrows;
-          dv.resultset.filterInitialized = colldv.resultset.filterInitialized;
-
-          dv.rematerialize({
-            removeWhereFilters: true
-          });
-        }
-        // wmelon-skip-end
 
         // Upgrade Logic for binary index refactoring at version 1.5
         if (dbObject.databaseVersion < 1.5) {
@@ -1908,62 +1379,9 @@
       this.emit('close');
     };
 
-    // wmelon-skip-start
-    /**-------------------------+
-    | Changes API               |
-    +--------------------------*/
+    
+// (Code skipped for WatermelonDB build)
 
-    /**
-     * The Changes API enables the tracking the changes occurred in the collections since the beginning of the session,
-     * so it's possible to create a differential dataset for synchronization purposes (possibly to a remote db)
-     */
-
-    /**
-     * (Changes API) : takes all the changes stored in each
-     * collection and creates a single array for the entire database. If an array of names
-     * of collections is passed then only the included collections will be tracked.
-     *
-     * @param {array=} optional array of collection names. No arg means all collections are processed.
-     * @returns {array} array of changes
-     * @see private method createChange() in Collection
-     * @memberof Loki
-     */
-    Loki.prototype.generateChangesNotification = function (arrayOfCollectionNames) {
-      function getCollName(coll) {
-        return coll.name;
-      }
-      var changes = [],
-        selectedCollections = arrayOfCollectionNames || this.collections.map(getCollName);
-
-      this.collections.forEach(function (coll) {
-        if (selectedCollections.indexOf(getCollName(coll)) !== -1) {
-          changes = changes.concat(coll.getChanges());
-        }
-      });
-      return changes;
-    };
-
-    /**
-     * (Changes API) - stringify changes for network transmission
-     * @returns {string} string representation of the changes
-     * @memberof Loki
-     */
-    Loki.prototype.serializeChanges = function (collectionNamesArray) {
-      return JSON.stringify(this.generateChangesNotification(collectionNamesArray));
-    };
-
-    /**
-     * (Changes API) : clears all the changes in all collections.
-     * @memberof Loki
-     */
-    Loki.prototype.clearChanges = function () {
-      this.collections.forEach(function (coll) {
-        if (coll.flushChanges) {
-          coll.flushChanges();
-        }
-      });
-    };
-    // wmelon-skip-end
     /*------------------+
     | PERSISTENCE       |
     -------------------*/
@@ -2083,469 +1501,9 @@
         callback();
       }
     };
-    // wmelon-skip-start
-    /**
-     * An adapter for adapters.  Converts a non reference mode adapter into a reference mode adapter
-     * which can perform destructuring and partioning.  Each collection will be stored in its own key/save and
-     * only dirty collections will be saved.  If you  turn on paging with default page size of 25megs and save
-     * a 75 meg collection it should use up roughly 3 save slots (key/value pairs sent to inner adapter).
-     * A dirty collection that spans three pages will save all three pages again
-     * Paging mode was added mainly because Chrome has issues saving 'too large' of a string within a
-     * single indexeddb row.  If a single document update causes the collection to be flagged as dirty, all
-     * of that collection's pages will be written on next save.
-     *
-     * @param {object} adapter - reference to a 'non-reference' mode loki adapter instance.
-     * @param {object=} options - configuration options for partitioning and paging
-     * @param {bool} options.paging - (default: false) set to true to enable paging collection data.
-     * @param {int} options.pageSize - (default : 25MB) you can use this to limit size of strings passed to inner adapter.
-     * @param {string} options.delimiter - allows you to override the default delimeter
-     * @constructor LokiPartitioningAdapter
-     */
-    function LokiPartitioningAdapter(adapter, options) {
-      this.mode = "reference";
-      this.adapter = null;
-      this.options = options || {};
-      this.dbref = null;
-      this.dbname = "";
-      this.pageIterator = {};
+    
+// (Code skipped for WatermelonDB build)
 
-      // verify user passed an appropriate adapter
-      if (adapter) {
-        if (adapter.mode === "reference") {
-          throw new Error("LokiPartitioningAdapter cannot be instantiated with a reference mode adapter");
-        }
-        else {
-          this.adapter = adapter;
-        }
-      }
-      else {
-        throw new Error("LokiPartitioningAdapter requires a (non-reference mode) adapter on construction");
-      }
-
-      // set collection paging defaults
-      if (!this.options.hasOwnProperty("paging")) {
-        this.options.paging = false;
-      }
-
-      // default to page size of 25 megs (can be up to your largest serialized object size larger than this)
-      if (!this.options.hasOwnProperty("pageSize")) {
-        this.options.pageSize = 25 * 1024 * 1024;
-      }
-
-      if (!this.options.hasOwnProperty("delimiter")) {
-        this.options.delimiter = '$<\n';
-      }
-    }
-
-    /**
-     * Loads a database which was partitioned into several key/value saves.
-     * (Loki persistence adapter interface function)
-     *
-     * @param {string} dbname - name of the database (filename/keyname)
-     * @param {function} callback - adapter callback to return load result to caller
-     * @memberof LokiPartitioningAdapter
-     */
-    LokiPartitioningAdapter.prototype.loadDatabase = function (dbname, callback) {
-      var self = this;
-      this.dbname = dbname;
-      this.dbref = new Loki(dbname);
-
-      // load the db container (without data)
-      this.adapter.loadDatabase(dbname, function (result) {
-        // empty database condition is for inner adapter return null/undefined/falsy
-        if (!result) {
-          // partition 0 not found so new database, no need to try to load other partitions.
-          // return same falsy result to loadDatabase to signify no database exists (yet)
-          callback(result);
-          return;
-        }
-
-        if (typeof result !== "string") {
-          callback(new Error("LokiPartitioningAdapter received an unexpected response from inner adapter loadDatabase()"));
-        }
-
-        // I will want to use loki destructuring helper methods so i will inflate into typed instance
-        var db = JSON.parse(result);
-        self.dbref.loadJSONObject(db);
-        db = null;
-
-        var clen = self.dbref.collections.length;
-
-        if (self.dbref.collections.length === 0) {
-          callback(self.dbref);
-          return;
-        }
-
-        self.pageIterator = {
-          collection: 0,
-          pageIndex: 0
-        };
-
-        self.loadNextPartition(0, function () {
-          callback(self.dbref);
-        });
-      });
-    };
-
-    /**
-     * Used to sequentially load each collection partition, one at a time.
-     *
-     * @param {int} partition - ordinal collection position to load next
-     * @param {function} callback - adapter callback to return load result to caller
-     */
-    LokiPartitioningAdapter.prototype.loadNextPartition = function (partition, callback) {
-      var keyname = this.dbname + "." + partition;
-      var self = this;
-
-      if (this.options.paging === true) {
-        this.pageIterator.pageIndex = 0;
-        this.loadNextPage(callback);
-        return;
-      }
-
-      this.adapter.loadDatabase(keyname, function (result) {
-        var data = self.dbref.deserializeCollection(result, { delimited: true, collectionIndex: partition });
-        self.dbref.collections[partition].data = data;
-
-        if (++partition < self.dbref.collections.length) {
-          self.loadNextPartition(partition, callback);
-        }
-        else {
-          callback();
-        }
-      });
-    };
-
-    /**
-     * Used to sequentially load the next page of collection partition, one at a time.
-     *
-     * @param {function} callback - adapter callback to return load result to caller
-     */
-    LokiPartitioningAdapter.prototype.loadNextPage = function (callback) {
-      // calculate name for next saved page in sequence
-      var keyname = this.dbname + "." + this.pageIterator.collection + "." + this.pageIterator.pageIndex;
-      var self = this;
-
-      // load whatever page is next in sequence
-      this.adapter.loadDatabase(keyname, function (result) {
-        var data = result.split(self.options.delimiter);
-        result = ""; // free up memory now that we have split it into array
-        var dlen = data.length;
-        var idx;
-
-        // detect if last page by presence of final empty string element and remove it if so
-        var isLastPage = (data[dlen - 1] === "");
-        if (isLastPage) {
-          data.pop();
-          dlen = data.length;
-          // empty collections are just a delimiter meaning two blank items
-          if (data[dlen - 1] === "" && dlen === 1) {
-            data.pop();
-            dlen = data.length;
-          }
-        }
-
-        // convert stringified array elements to object instances and push to collection data
-        for (idx = 0; idx < dlen; idx++) {
-          self.dbref.collections[self.pageIterator.collection].data.push(JSON.parse(data[idx]));
-          data[idx] = null;
-        }
-        data = [];
-
-        // if last page, we are done with this partition
-        if (isLastPage) {
-
-          // if there are more partitions, kick off next partition load
-          if (++self.pageIterator.collection < self.dbref.collections.length) {
-            self.loadNextPartition(self.pageIterator.collection, callback);
-          }
-          else {
-            callback();
-          }
-        }
-        else {
-          self.pageIterator.pageIndex++;
-          self.loadNextPage(callback);
-        }
-      });
-    };
-
-    /**
-     * Saves a database by partioning into separate key/value saves.
-     * (Loki 'reference mode' persistence adapter interface function)
-     *
-     * @param {string} dbname - name of the database (filename/keyname)
-     * @param {object} dbref - reference to database which we will partition and save.
-     * @param {function} callback - adapter callback to return load result to caller
-     *
-     * @memberof LokiPartitioningAdapter
-     */
-    LokiPartitioningAdapter.prototype.exportDatabase = function (dbname, dbref, callback) {
-      var self = this;
-      var idx, clen = dbref.collections.length;
-
-      this.dbref = dbref;
-      this.dbname = dbname;
-
-      // queue up dirty partitions to be saved
-      this.dirtyPartitions = [-1];
-      for (idx = 0; idx < clen; idx++) {
-        if (dbref.collections[idx].dirty) {
-          this.dirtyPartitions.push(idx);
-        }
-      }
-
-      this.saveNextPartition(function (err) {
-        callback(err);
-      });
-    };
-
-    /**
-     * Helper method used internally to save each dirty collection, one at a time.
-     *
-     * @param {function} callback - adapter callback to return load result to caller
-     */
-    LokiPartitioningAdapter.prototype.saveNextPartition = function (callback) {
-      var self = this;
-      var partition = this.dirtyPartitions.shift();
-      var keyname = this.dbname + ((partition === -1) ? "" : ("." + partition));
-
-      // if we are doing paging and this is collection partition
-      if (this.options.paging && partition !== -1) {
-        this.pageIterator = {
-          collection: partition,
-          docIndex: 0,
-          pageIndex: 0
-        };
-
-        // since saveNextPage recursively calls itself until done, our callback means this whole paged partition is finished
-        this.saveNextPage(function (err) {
-          if (self.dirtyPartitions.length === 0) {
-            callback(err);
-          }
-          else {
-            self.saveNextPartition(callback);
-          }
-        });
-        return;
-      }
-
-      // otherwise this is 'non-paged' partioning...
-      var result = this.dbref.serializeDestructured({
-        partitioned: true,
-        delimited: true,
-        partition: partition
-      });
-
-      this.adapter.saveDatabase(keyname, result, function (err) {
-        if (err) {
-          callback(err);
-          return;
-        }
-
-        if (self.dirtyPartitions.length === 0) {
-          callback(null);
-        }
-        else {
-          self.saveNextPartition(callback);
-        }
-      });
-    };
-
-    /**
-     * Helper method used internally to generate and save the next page of the current (dirty) partition.
-     *
-     * @param {function} callback - adapter callback to return load result to caller
-     */
-    LokiPartitioningAdapter.prototype.saveNextPage = function (callback) {
-      var self = this;
-      var coll = this.dbref.collections[this.pageIterator.collection];
-      var keyname = this.dbname + "." + this.pageIterator.collection + "." + this.pageIterator.pageIndex;
-      var pageLen = 0,
-        cdlen = coll.data.length,
-        delimlen = this.options.delimiter.length;
-      var serializedObject = "",
-        pageBuilder = "";
-      var doneWithPartition = false,
-        doneWithPage = false;
-
-      var pageSaveCallback = function (err) {
-        pageBuilder = "";
-
-        if (err) {
-          callback(err);
-        }
-
-        // update meta properties then continue process by invoking callback
-        if (doneWithPartition) {
-          callback(null);
-        }
-        else {
-          self.pageIterator.pageIndex++;
-          self.saveNextPage(callback);
-        }
-      };
-
-      if (coll.data.length === 0) {
-        doneWithPartition = true;
-      }
-
-      while (true) {
-        if (!doneWithPartition) {
-          // serialize object
-          serializedObject = JSON.stringify(coll.data[this.pageIterator.docIndex]);
-          pageBuilder += serializedObject;
-          pageLen += serializedObject.length;
-
-          // if no more documents in collection to add, we are done with partition
-          if (++this.pageIterator.docIndex >= cdlen) doneWithPartition = true;
-        }
-        // if our current page is bigger than defined pageSize, we are done with page
-        if (pageLen >= this.options.pageSize) doneWithPage = true;
-
-        // if not done with current page, need delimiter before next item
-        // if done with partition we also want a delmiter to indicate 'end of pages' final empty row
-        if (!doneWithPage || doneWithPartition) {
-          pageBuilder += this.options.delimiter;
-          pageLen += delimlen;
-        }
-
-        // if we are done with page save it and pass off to next recursive call or callback
-        if (doneWithPartition || doneWithPage) {
-          this.adapter.saveDatabase(keyname, pageBuilder, pageSaveCallback);
-          return;
-        }
-      }
-    };
-
-    /**
-     * A loki persistence adapter which persists using node fs module
-     * @constructor LokiFsAdapter
-     */
-    function LokiFsAdapter() {
-      try {
-        this.fs = require('fs');
-      } catch (e) {
-        this.fs = null;
-      }
-    }
-
-    /**
-     * loadDatabase() - Load data from file, will throw an error if the file does not exist
-     * @param {string} dbname - the filename of the database to load
-     * @param {function} callback - the callback to handle the result
-     * @memberof LokiFsAdapter
-     */
-    LokiFsAdapter.prototype.loadDatabase = function loadDatabase(dbname, callback) {
-      var self = this;
-
-      this.fs.stat(dbname, function (err, stats) {
-        if (!err && stats.isFile()) {
-          self.fs.readFile(dbname, {
-            encoding: 'utf8'
-          }, function readFileCallback(err, data) {
-            if (err) {
-              callback(new Error(err));
-            } else {
-              callback(data);
-            }
-          });
-        }
-        else {
-          callback(null);
-        }
-      });
-    };
-
-    /**
-     * saveDatabase() - save data to file, will throw an error if the file can't be saved
-     * might want to expand this to avoid dataloss on partial save
-     * @param {string} dbname - the filename of the database to load
-     * @param {function} callback - the callback to handle the result
-     * @memberof LokiFsAdapter
-     */
-    LokiFsAdapter.prototype.saveDatabase = function saveDatabase(dbname, dbstring, callback) {
-      var self = this;
-      var tmpdbname = dbname + '~';
-      this.fs.writeFile(tmpdbname, dbstring, function writeFileCallback(err) {
-        if (err) {
-          callback(new Error(err));
-        } else {
-          self.fs.rename(tmpdbname, dbname, callback);
-        }
-      });
-    };
-
-    /**
-     * deleteDatabase() - delete the database file, will throw an error if the
-     * file can't be deleted
-     * @param {string} dbname - the filename of the database to delete
-     * @param {function} callback - the callback to handle the result
-     * @memberof LokiFsAdapter
-     */
-    LokiFsAdapter.prototype.deleteDatabase = function deleteDatabase(dbname, callback) {
-      this.fs.unlink(dbname, function deleteDatabaseCallback(err) {
-        if (err) {
-          callback(new Error(err));
-        } else {
-          callback();
-        }
-      });
-    };
-
-
-    /**
-     * A loki persistence adapter which persists to web browser's local storage object
-     * @constructor LokiLocalStorageAdapter
-     */
-    function LokiLocalStorageAdapter() { }
-
-    /**
-     * loadDatabase() - Load data from localstorage
-     * @param {string} dbname - the name of the database to load
-     * @param {function} callback - the callback to handle the result
-     * @memberof LokiLocalStorageAdapter
-     */
-    LokiLocalStorageAdapter.prototype.loadDatabase = function loadDatabase(dbname, callback) {
-      if (localStorageAvailable()) {
-        callback(localStorage.getItem(dbname));
-      } else {
-        callback(new Error('localStorage is not available'));
-      }
-    };
-
-    /**
-     * saveDatabase() - save data to localstorage, will throw an error if the file can't be saved
-     * might want to expand this to avoid dataloss on partial save
-     * @param {string} dbname - the filename of the database to load
-     * @param {function} callback - the callback to handle the result
-     * @memberof LokiLocalStorageAdapter
-     */
-    LokiLocalStorageAdapter.prototype.saveDatabase = function saveDatabase(dbname, dbstring, callback) {
-      if (localStorageAvailable()) {
-        localStorage.setItem(dbname, dbstring);
-        callback(null);
-      } else {
-        callback(new Error('localStorage is not available'));
-      }
-    };
-
-    /**
-     * deleteDatabase() - delete the database from localstorage, will throw an error if it
-     * can't be deleted
-     * @param {string} dbname - the filename of the database to delete
-     * @param {function} callback - the callback to handle the result
-     * @memberof LokiLocalStorageAdapter
-     */
-    LokiLocalStorageAdapter.prototype.deleteDatabase = function deleteDatabase(dbname, callback) {
-      if (localStorageAvailable()) {
-        localStorage.removeItem(dbname);
-        callback(null);
-      } else {
-        callback(new Error('localStorage is not available'));
-      }
-    };
-    // wmelon-skip-end
     /**
      * Wait for throttledSaves to complete and invoke your callback when drained or duration is met.
      *
@@ -3081,101 +2039,9 @@
      * @memberof Resultset
      */
     Resultset.prototype.branch = Resultset.prototype.copy;
-    // wmelon-skip-start
-    /**
-     * transform() - executes a named collection transform or raw array of transform steps against the resultset.
-     *
-     * @param transform {(string|array)} - name of collection transform or raw transform array
-     * @param parameters {object=} - (Optional) object property hash of parameters, if the transform requires them.
-     * @returns {Resultset} either (this) resultset or a clone of of this resultset (depending on steps)
-     * @memberof Resultset
-     * @example
-     * users.addTransform('CountryFilter', [
-     *   {
-     *     type: 'find',
-     *     value: {
-     *       'country': { $eq: '[%lktxp]Country' }
-     *     }
-     *   },
-     *   {
-     *     type: 'simplesort',
-     *     property: 'age',
-     *     options: { desc: false}
-     *   }
-     * ]);
-     * var results = users.chain().transform("CountryFilter", { Country: 'fr' }).data();
-     */
-    Resultset.prototype.transform = function (transform, parameters) {
-      var idx,
-        step,
-        rs = this;
+    
+// (Code skipped for WatermelonDB build)
 
-      // if transform is name, then do lookup first
-      if (typeof transform === 'string') {
-        if (this.collection.transforms.hasOwnProperty(transform)) {
-          transform = this.collection.transforms[transform];
-        }
-      }
-
-      // either they passed in raw transform array or we looked it up, so process
-      if (typeof transform !== 'object' || !Array.isArray(transform)) {
-        throw new Error("Invalid transform");
-      }
-
-      if (typeof parameters !== 'undefined') {
-        transform = Utils.resolveTransformParams(transform, parameters);
-      }
-
-      for (idx = 0; idx < transform.length; idx++) {
-        step = transform[idx];
-
-        switch (step.type) {
-          case "find":
-            rs.find(step.value);
-            break;
-          case "where":
-            rs.where(step.value);
-            break;
-          case "simplesort":
-            rs.simplesort(step.property, step.desc || step.options);
-            break;
-          case "compoundsort":
-            rs.compoundsort(step.value);
-            break;
-          case "sort":
-            rs.sort(step.value);
-            break;
-          case "limit":
-            rs = rs.limit(step.value);
-            break; // limit makes copy so update reference
-          case "offset":
-            rs = rs.offset(step.value);
-            break; // offset makes copy so update reference
-          case "map":
-            rs = rs.map(step.value, step.dataOptions);
-            break;
-          case "eqJoin":
-            rs = rs.eqJoin(step.joinData, step.leftJoinKey, step.rightJoinKey, step.mapFun, step.dataOptions);
-            break;
-          // following cases break chain by returning array data so make any of these last in transform steps
-          case "mapReduce":
-            rs = rs.mapReduce(step.mapFunction, step.reduceFunction);
-            break;
-          // following cases update documents in current filtered resultset (use carefully)
-          case "update":
-            rs.update(step.value);
-            break;
-          case "remove":
-            rs.remove();
-            break;
-          default:
-            break;
-        }
-      }
-
-      return rs;
-    };
-    // wmelon-skip-end
     /**
      * User supplied compare function is provided two documents to compare. (chainable)
      * @example
@@ -3944,143 +2810,9 @@
 
       return this;
     };
-    // wmelon-skip-start
-    /**
-     * data transformation via user supplied functions
-     *
-     * @param {function} mapFunction - this function accepts a single document for you to transform and return
-     * @param {function} reduceFunction - this function accepts many (array of map outputs) and returns single value
-     * @returns {value} The output of your reduceFunction
-     * @memberof Resultset
-     * @example
-     * var db = new loki("order.db");
-     * var orders = db.addCollection("orders");
-     * orders.insert([{ qty: 4, unitCost: 100.00 }, { qty: 10, unitCost: 999.99 }, { qty: 2, unitCost: 49.99 }]);
-     *
-     * function mapfun (obj) { return obj.qty*obj.unitCost };
-     * function reducefun(array) {
-     *   var grandTotal=0;
-     *   array.forEach(function(orderTotal) { grandTotal += orderTotal; });
-     *   return grandTotal;
-     * }
-     * var grandOrderTotal = orders.chain().mapReduce(mapfun, reducefun);
-     * console.log(grandOrderTotal);
-     */
-    Resultset.prototype.mapReduce = function (mapFunction, reduceFunction) {
-      try {
-        return reduceFunction(this.data().map(mapFunction));
-      } catch (err) {
-        throw err;
-      }
-    };
+    
+// (Code skipped for WatermelonDB build)
 
-    /**
-     * eqJoin() - Left joining two sets of data. Join keys can be defined or calculated properties
-     * eqJoin expects the right join key values to be unique.  Otherwise left data will be joined on the last joinData object with that key
-     * @param {Array|Resultset|Collection} joinData - Data array to join to.
-     * @param {(string|function)} leftJoinKey - Property name in this result set to join on or a function to produce a value to join on
-     * @param {(string|function)} rightJoinKey - Property name in the joinData to join on or a function to produce a value to join on
-     * @param {function=} mapFun - (Optional) A function that receives each matching pair and maps them into output objects - function(left,right){return joinedObject}
-     * @param {object=} dataOptions - options to data() before input to your map function
-     * @param {bool} dataOptions.removeMeta - allows removing meta before calling mapFun
-     * @param {boolean} dataOptions.forceClones - forcing the return of cloned objects to your map object
-     * @param {string} dataOptions.forceCloneMethod - Allows overriding the default or collection specified cloning method.
-     * @returns {Resultset} A resultset with data in the format [{left: leftObj, right: rightObj}]
-     * @memberof Resultset
-     * @example
-     * var db = new loki('sandbox.db');
-     *
-     * var products = db.addCollection('products');
-     * var orders = db.addCollection('orders');
-     *
-     * products.insert({ productId: "100234", name: "flywheel energy storage", unitCost: 19999.99 });
-     * products.insert({ productId: "140491", name: "300F super capacitor", unitCost: 129.99 });
-     * products.insert({ productId: "271941", name: "fuel cell", unitCost: 3999.99 });
-     * products.insert({ productId: "174592", name: "390V 3AH lithium bank", unitCost: 4999.99 });
-     *
-     * orders.insert({ orderDate : new Date("12/1/2017").getTime(), prodId: "174592", qty: 2, customerId: 2 });
-     * orders.insert({ orderDate : new Date("4/15/2016").getTime(), prodId: "271941", qty: 1, customerId: 1 });
-     * orders.insert({ orderDate : new Date("3/12/2017").getTime(), prodId: "140491", qty: 4, customerId: 4 });
-     * orders.insert({ orderDate : new Date("7/31/2017").getTime(), prodId: "100234", qty: 7, customerId: 3 });
-     * orders.insert({ orderDate : new Date("8/3/2016").getTime(), prodId: "174592", qty: 3, customerId: 5 });
-     *
-     * var mapfun = function(left, right) {
-     *   return {
-     *     orderId: left.$loki,
-     *     orderDate: new Date(left.orderDate) + '',
-     *     customerId: left.customerId,
-     *     qty: left.qty,
-     *     productId: left.prodId,
-     *     prodName: right.name,
-     *     prodCost: right.unitCost,
-     *     orderTotal: +((right.unitCost * left.qty).toFixed(2))
-     *   };
-     * };
-     *
-     * // join orders with relevant product info via eqJoin
-     * var orderSummary = orders.chain().eqJoin(products, "prodId", "productId", mapfun).data();
-     *
-     * console.log(orderSummary);
-     */
-    Resultset.prototype.eqJoin = function (joinData, leftJoinKey, rightJoinKey, mapFun, dataOptions) {
-
-      var leftData = [],
-        leftDataLength,
-        rightData = [],
-        rightDataLength,
-        key,
-        result = [],
-        leftKeyisFunction = typeof leftJoinKey === 'function',
-        rightKeyisFunction = typeof rightJoinKey === 'function',
-        joinMap = {};
-
-      //get the left data
-      leftData = this.data(dataOptions);
-      leftDataLength = leftData.length;
-
-      //get the right data
-      if (joinData instanceof Collection) {
-        rightData = joinData.chain().data(dataOptions);
-      } else if (joinData instanceof Resultset) {
-        rightData = joinData.data(dataOptions);
-      } else if (Array.isArray(joinData)) {
-        rightData = joinData;
-      } else {
-        throw new TypeError('joinData needs to be an array or result set');
-      }
-      rightDataLength = rightData.length;
-
-      //construct a lookup table
-
-      for (var i = 0; i < rightDataLength; i++) {
-        key = rightKeyisFunction ? rightJoinKey(rightData[i]) : rightData[i][rightJoinKey];
-        joinMap[key] = rightData[i];
-      }
-
-      if (!mapFun) {
-        mapFun = function (left, right) {
-          return {
-            left: left,
-            right: right
-          };
-        };
-      }
-
-      //Run map function over each object in the resultset
-      for (var j = 0; j < leftDataLength; j++) {
-        key = leftKeyisFunction ? leftJoinKey(leftData[j]) : leftData[j][leftJoinKey];
-        result.push(mapFun(leftData[j], joinMap[key] || {}));
-      }
-
-      //return return a new resultset with no filters
-      this.collection = new Collection('joinData');
-      this.collection.insert(result);
-      this.filteredrows = [];
-      this.filterInitialized = false;
-
-      return this;
-    };
-    // wmelon-skip-end
     /**
      * Applies a map function into a new collection for further chaining.
      * @param {function} mapFun - javascript map function
@@ -4108,862 +2840,9 @@
 
       return this;
     };
-    // wmelon-skip-start
-    /**
-     * DynamicView class is a versatile 'live' view class which can have filters and sorts applied.
-     *    Collection.addDynamicView(name) instantiates this DynamicView object and notifies it
-     *    whenever documents are add/updated/removed so it can remain up-to-date. (chainable)
-     *
-     * @example
-     * var mydv = mycollection.addDynamicView('test');  // default is non-persistent
-     * mydv.applyFind({ 'doors' : 4 });
-     * mydv.applyWhere(function(obj) { return obj.name === 'Toyota'; });
-     * var results = mydv.data();
-     *
-     * @constructor DynamicView
-     * @implements LokiEventEmitter
-     * @param {Collection} collection - A reference to the collection to work against
-     * @param {string} name - The name of this dynamic view
-     * @param {object=} options - (Optional) Pass in object with 'persistent' and/or 'sortPriority' options.
-     * @param {boolean} [options.persistent=false] - indicates if view is to main internal results array in 'resultdata'
-     * @param {string} [options.sortPriority='passive'] - 'passive' (sorts performed on call to data) or 'active' (after updates)
-     * @param {number} options.minRebuildInterval - minimum rebuild interval (need clarification to docs here)
-     * @see {@link Collection#addDynamicView} to construct instances of DynamicView
-     */
-    function DynamicView(collection, name, options) {
-      this.collection = collection;
-      this.name = name;
-      this.rebuildPending = false;
-      this.options = options || {};
+    
+// (Code skipped for WatermelonDB build)
 
-      if (!this.options.hasOwnProperty('persistent')) {
-        this.options.persistent = false;
-      }
-
-      // 'persistentSortPriority':
-      // 'passive' will defer the sort phase until they call data(). (most efficient overall)
-      // 'active' will sort async whenever next idle. (prioritizes read speeds)
-      if (!this.options.hasOwnProperty('sortPriority')) {
-        this.options.sortPriority = 'passive';
-      }
-
-      if (!this.options.hasOwnProperty('minRebuildInterval')) {
-        this.options.minRebuildInterval = 1;
-      }
-
-      this.resultset = new Resultset(collection);
-      this.resultdata = [];
-      this.resultsdirty = false;
-
-      this.cachedresultset = null;
-
-      // keep ordered filter pipeline
-      this.filterPipeline = [];
-      if (!this.collection.disableFreeze) {
-        Object.freeze(this.filterPipeline);
-      }
-
-      // sorting member variables
-      // we only support one active search, applied using applySort() or applySimpleSort()
-      this.sortFunction = null;
-      this.sortCriteria = null;
-      this.sortCriteriaSimple = null;
-      this.sortDirty = false;
-
-      // for now just have 1 event for when we finally rebuilt lazy view
-      // once we refactor transactions, i will tie in certain transactional events
-
-      this.events = {
-        'rebuild': [],
-        'filter': [],
-        'sort': []
-      };
-    }
-
-    DynamicView.prototype = new LokiEventEmitter();
-    DynamicView.prototype.constructor = DynamicView;
-
-    /**
-     * getSort() - used to get the current sort
-     *
-     * @returns function (sortFunction) or array (sortCriteria) or object (sortCriteriaSimple)
-     */
-    DynamicView.prototype.getSort = function () {
-      return this.sortFunction || this.sortCriteria || this.sortCriteriaSimple;
-    };
-
-    /**
-     * rematerialize() - internally used immediately after deserialization (loading)
-     *    This will clear out and reapply filterPipeline ops, recreating the view.
-     *    Since where filters do not persist correctly, this method allows
-     *    restoring the view to state where user can re-apply those where filters.
-     *
-     * @param {Object=} options - (Optional) allows specification of 'removeWhereFilters' option
-     * @returns {DynamicView} This dynamic view for further chained ops.
-     * @memberof DynamicView
-     * @fires DynamicView.rebuild
-     */
-    DynamicView.prototype.rematerialize = function (options) {
-      var fpl,
-        fpi,
-        idx;
-
-      options = options || {};
-
-      this.resultdata = [];
-      this.resultsdirty = true;
-      this.resultset = new Resultset(this.collection);
-
-      if (this.sortFunction || this.sortCriteria || this.sortCriteriaSimple) {
-        this.sortDirty = true;
-      }
-
-      var wasFrozen = Object.isFrozen(this.filterPipeline);
-      if (options.hasOwnProperty('removeWhereFilters')) {
-        // for each view see if it had any where filters applied... since they don't
-        // serialize those functions lets remove those invalid filters
-        if (wasFrozen) {
-          this.filterPipeline = this.filterPipeline.slice();
-        }
-        fpl = this.filterPipeline.length;
-        fpi = fpl;
-        while (fpi--) {
-          if (this.filterPipeline[fpi].type === 'where') {
-            if (fpi !== this.filterPipeline.length - 1) {
-              this.filterPipeline[fpi] = this.filterPipeline[this.filterPipeline.length - 1];
-            }
-            this.filterPipeline.length--;
-          }
-        }
-      }
-
-      // back up old filter pipeline, clear filter pipeline, and reapply pipeline ops
-      var ofp = this.filterPipeline;
-      this.filterPipeline = [];
-
-      // now re-apply 'find' filterPipeline ops
-      fpl = ofp.length;
-      for (idx = 0; idx < fpl; idx++) {
-        this.applyFind(ofp[idx].val, ofp[idx].uid);
-      }
-      if (wasFrozen) {
-        Object.freeze(this.filterPipeline);
-      }
-
-      // during creation of unit tests, i will remove this forced refresh and leave lazy
-      this.data();
-
-      // emit rebuild event in case user wants to be notified
-      this.emit('rebuild', this);
-
-      return this;
-    };
-
-    /**
-     * branchResultset() - Makes a copy of the internal resultset for branched queries.
-     *    Unlike this dynamic view, the branched resultset will not be 'live' updated,
-     *    so your branched query should be immediately resolved and not held for future evaluation.
-     *
-     * @param {(string|array=)} transform - Optional name of collection transform, or an array of transform steps
-     * @param {object=} parameters - optional parameters (if optional transform requires them)
-     * @returns {Resultset} A copy of the internal resultset for branched queries.
-     * @memberof DynamicView
-     * @example
-     * var db = new loki('test');
-     * var coll = db.addCollection('mydocs');
-     * var dv = coll.addDynamicView('myview');
-     * var tx = [
-     *   {
-     *     type: 'offset',
-     *     value: '[%lktxp]pageStart'
-     *   },
-     *   {
-     *     type: 'limit',
-     *     value: '[%lktxp]pageSize'
-     *   }
-     * ];
-     * coll.addTransform('viewPaging', tx);
-     *
-     * // add some records
-     *
-     * var results = dv.branchResultset('viewPaging', { pageStart: 10, pageSize: 10 }).data();
-     */
-    DynamicView.prototype.branchResultset = function (transform, parameters) {
-      var rs = this.resultset.branch();
-
-      if (typeof transform === 'undefined') {
-        return rs;
-      }
-
-      return rs.transform(transform, parameters);
-
-    };
-
-    /**
-     * toJSON() - Override of toJSON to avoid circular references
-     *
-     */
-    DynamicView.prototype.toJSON = function () {
-      var copy = new DynamicView(this.collection, this.name, this.options);
-      copy.resultset = this.resultset;
-      copy.resultdata = []; // let's not save data (copy) to minimize size
-      copy.resultsdirty = true;
-      copy.filterPipeline = this.filterPipeline;
-      copy.sortFunction = this.sortFunction;
-      copy.sortCriteria = this.sortCriteria;
-      copy.sortCriteriaSimple = this.sortCriteriaSimple || null;
-      copy.sortDirty = this.sortDirty;
-
-      // avoid circular reference, reapply in db.loadJSON()
-      copy.collection = null;
-
-      return copy;
-    };
-
-    /**
-     * removeFilters() - Used to clear pipeline and reset dynamic view to initial state.
-     *     Existing options should be retained.
-     * @param {object=} options - configure removeFilter behavior
-     * @param {boolean=} options.queueSortPhase - (default: false) if true we will async rebuild view (maybe set default to true in future?)
-     * @memberof DynamicView
-     */
-    DynamicView.prototype.removeFilters = function (options) {
-      options = options || {};
-
-      this.rebuildPending = false;
-      this.resultset.reset();
-      this.resultdata = [];
-      this.resultsdirty = true;
-
-      this.cachedresultset = null;
-
-      var wasFrozen = Object.isFrozen(this.filterPipeline);
-      var filterChanged = this.filterPipeline.length > 0;
-      // keep ordered filter pipeline
-      this.filterPipeline = [];
-      if (wasFrozen) {
-        Object.freeze(this.filterPipeline);
-      }
-
-      // sorting member variables
-      // we only support one active search, applied using applySort() or applySimpleSort()
-      this.sortFunction = null;
-      this.sortCriteria = null;
-      this.sortCriteriaSimple = null;
-      this.sortDirty = false;
-
-      if (options.queueSortPhase === true) {
-        this.queueSortPhase();
-      }
-
-      if (filterChanged) {
-        this.emit('filter');
-      }
-    };
-
-    /**
-     * applySort() - Used to apply a sort to the dynamic view
-     * @example
-     * dv.applySort(function(obj1, obj2) {
-     *   if (obj1.name === obj2.name) return 0;
-     *   if (obj1.name > obj2.name) return 1;
-     *   if (obj1.name < obj2.name) return -1;
-     * });
-     *
-     * @param {function} comparefun - a javascript compare function used for sorting
-     * @returns {DynamicView} this DynamicView object, for further chain ops.
-     * @memberof DynamicView
-     */
-    DynamicView.prototype.applySort = function (comparefun) {
-      this.sortFunction = comparefun;
-      this.sortCriteria = null;
-      this.sortCriteriaSimple = null;
-
-      this.queueSortPhase();
-      this.emit('sort');
-
-      return this;
-    };
-
-    /**
-     * applySimpleSort() - Used to specify a property used for view translation.
-     * @example
-     * dv.applySimpleSort("name");
-     *
-     * @param {string} propname - Name of property by which to sort.
-     * @param {object|boolean=} options - boolean for sort descending or options object
-     * @param {boolean} [options.desc=false] - whether we should sort descending.
-     * @param {boolean} [options.disableIndexIntersect=false] - whether we should explicity not use array intersection.
-     * @param {boolean} [options.forceIndexIntersect=false] - force array intersection (if binary index exists).
-     * @param {boolean} [options.useJavascriptSorting=false] - whether results are sorted via basic javascript sort.
-     * @returns {DynamicView} this DynamicView object, for further chain ops.
-     * @memberof DynamicView
-     */
-    DynamicView.prototype.applySimpleSort = function (propname, options) {
-      this.sortCriteriaSimple = { propname: propname, options: options || false };
-      if (!this.collection.disableFreeze) {
-        deepFreeze(this.sortCriteriaSimple);
-      }
-      this.sortCriteria = null;
-      this.sortFunction = null;
-
-      this.queueSortPhase();
-      this.emit('sort');
-
-      return this;
-    };
-
-    /**
-     * applySortCriteria() - Allows sorting a resultset based on multiple columns.
-     * @example
-     * // to sort by age and then name (both ascending)
-     * dv.applySortCriteria(['age', 'name']);
-     * // to sort by age (ascending) and then by name (descending)
-     * dv.applySortCriteria(['age', ['name', true]);
-     * // to sort by age (descending) and then by name (descending)
-     * dv.applySortCriteria(['age', true], ['name', true]);
-     *
-     * @param {array} properties - array of property names or subarray of [propertyname, isdesc] used evaluate sort order
-     * @returns {DynamicView} Reference to this DynamicView, sorted, for future chain operations.
-     * @memberof DynamicView
-     */
-    DynamicView.prototype.applySortCriteria = function (criteria) {
-      this.sortCriteria = criteria;
-      if (!this.collection.disableFreeze) {
-        deepFreeze(this.sortCriteria);
-      }
-      this.sortCriteriaSimple = null;
-      this.sortFunction = null;
-
-      this.queueSortPhase();
-      this.emit('sort');
-      return this;
-    };
-
-    /**
-     * startTransaction() - marks the beginning of a transaction.
-     *
-     * @returns {DynamicView} this DynamicView object, for further chain ops.
-     */
-    DynamicView.prototype.startTransaction = function () {
-      this.cachedresultset = this.resultset.copy();
-
-      return this;
-    };
-
-    /**
-     * commit() - commits a transaction.
-     *
-     * @returns {DynamicView} this DynamicView object, for further chain ops.
-     */
-    DynamicView.prototype.commit = function () {
-      this.cachedresultset = null;
-
-      return this;
-    };
-
-    /**
-     * rollback() - rolls back a transaction.
-     *
-     * @returns {DynamicView} this DynamicView object, for further chain ops.
-     */
-    DynamicView.prototype.rollback = function () {
-      this.resultset = this.cachedresultset;
-
-      if (this.options.persistent) {
-        // for now just rebuild the persistent dynamic view data in this worst case scenario
-        // (a persistent view utilizing transactions which get rolled back), we already know the filter so not too bad.
-        this.resultdata = this.resultset.data();
-
-        this.emit('rebuild', this);
-      }
-
-      return this;
-    };
-
-
-    /**
-     * Implementation detail.
-     * _indexOfFilterWithId() - Find the index of a filter in the pipeline, by that filter's ID.
-     *
-     * @param {(string|number)} uid - The unique ID of the filter.
-     * @returns {number}: index of the referenced filter in the pipeline; -1 if not found.
-     */
-    DynamicView.prototype._indexOfFilterWithId = function (uid) {
-      if (typeof uid === 'string' || typeof uid === 'number') {
-        for (var idx = 0, len = this.filterPipeline.length; idx < len; idx += 1) {
-          if (uid === this.filterPipeline[idx].uid) {
-            return idx;
-          }
-        }
-      }
-      return -1;
-    };
-
-    /**
-     * Implementation detail.
-     * _addFilter() - Add the filter object to the end of view's filter pipeline and apply the filter to the resultset.
-     *
-     * @param {object} filter - The filter object. Refer to applyFilter() for extra details.
-     */
-    DynamicView.prototype._addFilter = function (filter) {
-      var wasFrozen = Object.isFrozen(this.filterPipeline);
-      if (wasFrozen) {
-        this.filterPipeline = this.filterPipeline.slice();
-      }
-      if (!this.collection.disableFreeze) {
-        deepFreeze(filter);
-      }
-      this.filterPipeline.push(filter);
-      if (wasFrozen) {
-        Object.freeze(this.filterPipeline);
-      }
-      this.resultset[filter.type](filter.val);
-    };
-
-    /**
-     * reapplyFilters() - Reapply all the filters in the current pipeline.
-     *
-     * @returns {DynamicView} this DynamicView object, for further chain ops.
-     */
-    DynamicView.prototype.reapplyFilters = function () {
-      this.resultset.reset();
-
-      this.cachedresultset = null;
-      if (this.options.persistent) {
-        this.resultdata = [];
-        this.resultsdirty = true;
-      }
-
-      var filters = this.filterPipeline;
-      var wasFrozen = Object.isFrozen(filters);
-      this.filterPipeline = [];
-
-      for (var idx = 0, len = filters.length; idx < len; idx += 1) {
-        this._addFilter(filters[idx]);
-      }
-      if (wasFrozen) {
-        Object.freeze(this.filterPipeline);
-      }
-
-      if (this.sortFunction || this.sortCriteria || this.sortCriteriaSimple) {
-        this.queueSortPhase();
-      } else {
-        this.queueRebuildEvent();
-      }
-      this.emit('filter');
-      return this;
-    };
-
-    /**
-     * applyFilter() - Adds or updates a filter in the DynamicView filter pipeline
-     *
-     * @param {object} filter - A filter object to add to the pipeline.
-     *    The object is in the format { 'type': filter_type, 'val', filter_param, 'uid', optional_filter_id }
-     * @returns {DynamicView} this DynamicView object, for further chain ops.
-     * @memberof DynamicView
-     */
-    DynamicView.prototype.applyFilter = function (filter) {
-      var idx = this._indexOfFilterWithId(filter.uid);
-      if (idx >= 0) {
-        var wasFrozen = Object.isFrozen(this.filterPipeline);
-        if (wasFrozen) {
-          this.filterPipeline = this.filterPipeline.slice();
-        }
-        this.filterPipeline[idx] = filter;
-        if (wasFrozen) {
-          freeze(filter);
-          Object.freeze(this.filterPipeline);
-        }
-        return this.reapplyFilters();
-      }
-
-      this.cachedresultset = null;
-      if (this.options.persistent) {
-        this.resultdata = [];
-        this.resultsdirty = true;
-      }
-
-      this._addFilter(filter);
-
-      if (this.sortFunction || this.sortCriteria || this.sortCriteriaSimple) {
-        this.queueSortPhase();
-      } else {
-        this.queueRebuildEvent();
-      }
-
-      this.emit('filter');
-      return this;
-    };
-
-    /**
-     * applyFind() - Adds or updates a mongo-style query option in the DynamicView filter pipeline
-     *
-     * @param {object} query - A mongo-style query object to apply to pipeline
-     * @param {(string|number)=} uid - Optional: The unique ID of this filter, to reference it in the future.
-     * @returns {DynamicView} this DynamicView object, for further chain ops.
-     * @memberof DynamicView
-     */
-    DynamicView.prototype.applyFind = function (query, uid) {
-      this.applyFilter({
-        type: 'find',
-        val: query,
-        uid: uid
-      });
-      return this;
-    };
-
-    /**
-     * applyWhere() - Adds or updates a javascript filter function in the DynamicView filter pipeline
-     *
-     * @param {function} fun - A javascript filter function to apply to pipeline
-     * @param {(string|number)=} uid - Optional: The unique ID of this filter, to reference it in the future.
-     * @returns {DynamicView} this DynamicView object, for further chain ops.
-     * @memberof DynamicView
-     */
-    DynamicView.prototype.applyWhere = function (fun, uid) {
-      this.applyFilter({
-        type: 'where',
-        val: fun,
-        uid: uid
-      });
-      return this;
-    };
-
-    /**
-     * removeFilter() - Remove the specified filter from the DynamicView filter pipeline
-     *
-     * @param {(string|number)} uid - The unique ID of the filter to be removed.
-     * @returns {DynamicView} this DynamicView object, for further chain ops.
-     * @memberof DynamicView
-     */
-    DynamicView.prototype.removeFilter = function (uid) {
-      var idx = this._indexOfFilterWithId(uid);
-      if (idx < 0) {
-        throw new Error("Dynamic view does not contain a filter with ID: " + uid);
-      }
-      var wasFrozen = Object.isFrozen(this.filterPipeline);
-      if (wasFrozen) {
-        this.filterPipeline = this.filterPipeline.slice();
-      }
-      this.filterPipeline.splice(idx, 1);
-      if (wasFrozen) {
-        Object.freeze(this.filterPipeline);
-      }
-      this.reapplyFilters();
-      return this;
-    };
-
-    /**
-     * count() - returns the number of documents representing the current DynamicView contents.
-     *
-     * @returns {number} The number of documents representing the current DynamicView contents.
-     * @memberof DynamicView
-     */
-    DynamicView.prototype.count = function () {
-      // in order to be accurate we will pay the minimum cost (and not alter dv state management)
-      // recurring resultset data resolutions should know internally its already up to date.
-      // for persistent data this will not update resultdata nor fire rebuild event.
-      if (this.resultsdirty) {
-        this.resultdata = this.resultset.data();
-      }
-
-      return this.resultset.count();
-    };
-
-    /**
-     * data() - resolves and pending filtering and sorting, then returns document array as result.
-     *
-     * @param {object=} options - optional parameters to pass to resultset.data() if non-persistent
-     * @param {boolean} options.forceClones - Allows forcing the return of cloned objects even when
-     *        the collection is not configured for clone object.
-     * @param {string} options.forceCloneMethod - Allows overriding the default or collection specified cloning method.
-     *        Possible values include 'parse-stringify', 'jquery-extend-deep', 'shallow', 'shallow-assign'
-     * @param {bool} options.removeMeta - Will force clones and strip $loki and meta properties from documents
-     * @returns {array} An array of documents representing the current DynamicView contents.
-     * @memberof DynamicView
-     */
-    DynamicView.prototype.data = function (options) {
-      // using final sort phase as 'catch all' for a few use cases which require full rebuild
-      if (this.sortDirty || this.resultsdirty) {
-        this.performSortPhase({
-          suppressRebuildEvent: true
-        });
-      }
-      return (this.options.persistent) ? (this.resultdata) : (this.resultset.data(options));
-    };
-
-    /**
-     * queueRebuildEvent() - When the view is not sorted we may still wish to be notified of rebuild events.
-     *     This event will throttle and queue a single rebuild event when batches of updates affect the view.
-     */
-    DynamicView.prototype.queueRebuildEvent = function () {
-      if (this.rebuildPending) {
-        return;
-      }
-      this.rebuildPending = true;
-
-      var self = this;
-      setTimeout(function () {
-        if (self.rebuildPending) {
-          self.rebuildPending = false;
-          self.emit('rebuild', self);
-        }
-      }, this.options.minRebuildInterval);
-    };
-
-    /**
-     * queueSortPhase : If the view is sorted we will throttle sorting to either :
-     *    (1) passive - when the user calls data(), or
-     *    (2) active - once they stop updating and yield js thread control
-     */
-    DynamicView.prototype.queueSortPhase = function () {
-      // already queued? exit without queuing again
-      if (this.sortDirty) {
-        return;
-      }
-      this.sortDirty = true;
-
-      var self = this;
-      if (this.options.sortPriority === "active") {
-        // active sorting... once they are done and yield js thread, run async performSortPhase()
-        setTimeout(function () {
-          self.performSortPhase();
-        }, this.options.minRebuildInterval);
-      } else {
-        // must be passive sorting... since not calling performSortPhase (until data call), lets use queueRebuildEvent to
-        // potentially notify user that data has changed.
-        this.queueRebuildEvent();
-      }
-    };
-
-    /**
-     * performSortPhase() - invoked synchronously or asynchronously to perform final sort phase (if needed)
-     *
-     */
-    DynamicView.prototype.performSortPhase = function (options) {
-      // async call to this may have been pre-empted by synchronous call to data before async could fire
-      if (!this.sortDirty && !this.resultsdirty) {
-        return;
-      }
-
-      options = options || {};
-
-      if (this.sortDirty) {
-        if (this.sortFunction) {
-          this.resultset.sort(this.sortFunction);
-        } else if (this.sortCriteria) {
-          this.resultset.compoundsort(this.sortCriteria);
-        } else if (this.sortCriteriaSimple) {
-          this.resultset.simplesort(this.sortCriteriaSimple.propname, this.sortCriteriaSimple.options);
-        }
-
-        this.sortDirty = false;
-      }
-
-      if (this.options.persistent) {
-        // persistent view, rebuild local resultdata array
-        this.resultdata = this.resultset.data();
-        this.resultsdirty = false;
-      }
-
-      if (!options.suppressRebuildEvent) {
-        this.emit('rebuild', this);
-      }
-    };
-
-    /**
-     * evaluateDocument() - internal method for (re)evaluating document inclusion.
-     *    Called by : collection.insert() and collection.update().
-     *
-     * @param {int} objIndex - index of document to (re)run through filter pipeline.
-     * @param {bool} isNew - true if the document was just added to the collection.
-     */
-    DynamicView.prototype.evaluateDocument = function (objIndex, isNew) {
-      // if no filter applied yet, the result 'set' should remain 'everything'
-      if (!this.resultset.filterInitialized) {
-        if (this.options.persistent) {
-          this.resultdata = this.resultset.data();
-        }
-        // need to re-sort to sort new document
-        if (this.sortFunction || this.sortCriteria || this.sortCriteriaSimple) {
-          this.queueSortPhase();
-        } else {
-          this.queueRebuildEvent();
-        }
-        return;
-      }
-
-      var ofr = this.resultset.filteredrows;
-      var oldPos = (isNew) ? (-1) : (ofr.indexOf(+objIndex));
-      var oldlen = ofr.length;
-
-      // creating a 1-element resultset to run filter chain ops on to see if that doc passes filters;
-      // mostly efficient algorithm, slight stack overhead price (this function is called on inserts and updates)
-      var evalResultset = new Resultset(this.collection);
-      evalResultset.filteredrows = [objIndex];
-      evalResultset.filterInitialized = true;
-      var filter;
-      for (var idx = 0, len = this.filterPipeline.length; idx < len; idx++) {
-        filter = this.filterPipeline[idx];
-        evalResultset[filter.type](filter.val);
-      }
-
-      // not a true position, but -1 if not pass our filter(s), 0 if passed filter(s)
-      var newPos = (evalResultset.filteredrows.length === 0) ? -1 : 0;
-
-      // wasn't in old, shouldn't be now... do nothing
-      if (oldPos === -1 && newPos === -1) return;
-
-      // wasn't in resultset, should be now... add
-      if (oldPos === -1 && newPos !== -1) {
-        ofr.push(objIndex);
-
-        if (this.options.persistent) {
-          this.resultdata.push(this.collection.data[objIndex]);
-        }
-
-        // need to re-sort to sort new document
-        if (this.sortFunction || this.sortCriteria || this.sortCriteriaSimple) {
-          this.queueSortPhase();
-        } else {
-          this.queueRebuildEvent();
-        }
-
-        return;
-      }
-
-      // was in resultset, shouldn't be now... delete
-      if (oldPos !== -1 && newPos === -1) {
-        if (oldPos < oldlen - 1) {
-          ofr.splice(oldPos, 1);
-
-          if (this.options.persistent) {
-            this.resultdata.splice(oldPos, 1);
-          }
-        } else {
-          ofr.length = oldlen - 1;
-
-          if (this.options.persistent) {
-            this.resultdata.length = oldlen - 1;
-          }
-        }
-
-        // in case changes to data altered a sort column
-        if (this.sortFunction || this.sortCriteria || this.sortCriteriaSimple) {
-          this.queueSortPhase();
-        } else {
-          this.queueRebuildEvent();
-        }
-
-        return;
-      }
-
-      // was in resultset, should still be now... (update persistent only?)
-      if (oldPos !== -1 && newPos !== -1) {
-        if (this.options.persistent) {
-          // in case document changed, replace persistent view data with the latest collection.data document
-          this.resultdata[oldPos] = this.collection.data[objIndex];
-        }
-
-        // in case changes to data altered a sort column
-        if (this.sortFunction || this.sortCriteria || this.sortCriteriaSimple) {
-          this.queueSortPhase();
-        } else {
-          this.queueRebuildEvent();
-        }
-
-        return;
-      }
-    };
-
-    /**
-     * removeDocument() - internal function called on collection.delete()
-     * @param {number|number[]} objIndex - index of document to (re)run through filter pipeline.
-     */
-    DynamicView.prototype.removeDocument = function (objIndex) {
-      var idx, rmidx, rmlen, rxo = {}, fxo = {};
-      var adjels = [];
-      var drs = this.resultset;
-      var fr = this.resultset.filteredrows;
-      var frlen = fr.length;
-
-      // if no filter applied yet, the result 'set' should remain 'everything'
-      if (!this.resultset.filterInitialized) {
-        if (this.options.persistent) {
-          this.resultdata = this.resultset.data();
-        }
-        // in case changes to data altered a sort column
-        if (this.sortFunction || this.sortCriteria || this.sortCriteriaSimple) {
-          this.queueSortPhase();
-        } else {
-          this.queueRebuildEvent();
-        }
-        return;
-      }
-
-      // if passed single index, wrap in array
-      if (!Array.isArray(objIndex)) {
-        objIndex = [objIndex];
-      }
-
-      rmlen = objIndex.length;
-      // create intersection object of data indices to remove
-      for (rmidx = 0; rmidx < rmlen; rmidx++) {
-        rxo[objIndex[rmidx]] = true;
-      }
-
-      // pivot remove data indices into remove filteredrows indices and dump in hashobject
-      for (idx = 0; idx < frlen; idx++) {
-        if (rxo[fr[idx]]) fxo[idx] = true;
-      }
-
-      // if any of the removed items were in our filteredrows...
-      if (Object.keys(fxo).length > 0) {
-        // remove them from filtered rows
-        this.resultset.filteredrows = this.resultset.filteredrows.filter(function (di, idx) { return !fxo[idx]; });
-        // if persistent...
-        if (this.options.persistent) {
-          // remove from resultdata
-          this.resultdata = this.resultdata.filter(function (obj, idx) { return !fxo[idx]; });
-        }
-
-        // and queue sorts
-        if (this.sortFunction || this.sortCriteria || this.sortCriteriaSimple) {
-          this.queueSortPhase();
-        } else {
-          this.queueRebuildEvent();
-        }
-      }
-
-      // to remove holes, we need to 'shift down' indices, this filter function finds number of positions to shift
-      var filt = function (idx) { return function (di) { return di < drs.filteredrows[idx]; }; };
-
-      frlen = drs.filteredrows.length;
-      for (idx = 0; idx < frlen; idx++) {
-        // grab subset of removed elements where data index is less than current filtered row data index;
-        // use this to determine how many positions iterated remaining data index needs to be 'shifted down'
-        adjels = objIndex.filter(filt(idx));
-        drs.filteredrows[idx] -= adjels.length;
-      }
-    };
-
-    /**
-     * mapReduce() - data transformation via user supplied functions
-     *
-     * @param {function} mapFunction - this function accepts a single document for you to transform and return
-     * @param {function} reduceFunction - this function accepts many (array of map outputs) and returns single value
-     * @returns The output of your reduceFunction
-     * @memberof DynamicView
-     */
-    DynamicView.prototype.mapReduce = function (mapFunction, reduceFunction) {
-      try {
-        return reduceFunction(this.data().map(mapFunction));
-      } catch (err) {
-        throw err;
-      }
-    };
-    // wmelon-skip-end
 
     /**
      * Collection class that handles documents of same type
@@ -5037,13 +2916,9 @@
         });
       }
 
-      // wmelon-skip-start
-      if (options.hasOwnProperty('exact')) {
-        options.exact.forEach(function (prop) {
-          self.constraints.exact[prop] = new ExactIndex(prop);
-        });
-      }
-      // wmelon-skip-end
+      
+// (Code skipped for WatermelonDB build)
+
 
       // if set to true we will optimally keep indices 'fresh' during insert/update/remove ops (never dirty/never needs rebuild)
       // if you frequently intersperse insert/update/remove ops between find ops this will likely be significantly faster option.
@@ -5082,15 +2957,9 @@
       // option to deep freeze all documents
       this.disableFreeze = options.hasOwnProperty('disableFreeze') ? options.disableFreeze : true;
 
-      // wmelon-skip-start
-      //option to activate a cleaner daemon - clears "aged" documents at set intervals.
-      this.ttl = {
-        age: null,
-        ttlInterval: null,
-        daemon: null
-      };
-      this.setTTL(options.ttl || -1, options.ttlInterval);
-      // wmelon-skip-end
+      
+// (Code skipped for WatermelonDB build)
+
 
       // currentMaxId - change manually at your own peril!
       this.maxId = 0;
@@ -5132,182 +3001,23 @@
         this.ensureIndex(indices[idx]);
       }
 
-      // wmelon-skip-start
-      function observerCallback(changes) {
+      
+// (Code skipped for WatermelonDB build)
 
-        var changedObjects = typeof Set === 'function' ? new Set() : [];
-
-        if (!changedObjects.add)
-          changedObjects.add = function (object) {
-            if (this.indexOf(object) === -1)
-              this.push(object);
-            return this;
-          };
-
-        changes.forEach(function (change) {
-          changedObjects.add(change.object);
-        });
-
-        changedObjects.forEach(function (object) {
-          if (!hasOwnProperty.call(object, '$loki'))
-            return self.removeAutoUpdateObserver(object);
-          try {
-            self.update(object);
-          } catch (err) { }
-        });
-      }
-
-      this.observerCallback = observerCallback;
-
-      //Compare changed object (which is a forced clone) with existing object and return the delta
-      function getChangeDelta(obj, old) {
-        if (old) {
-          return getObjectDelta(old, obj);
-        }
-        else {
-          return JSON.parse(JSON.stringify(obj));
-        }
-      }
-
-      this.getChangeDelta = getChangeDelta;
-
-      function getObjectDelta(oldObject, newObject) {
-        var propertyNames = newObject !== null && typeof newObject === 'object' ? Object.keys(newObject) : null;
-        if (propertyNames && propertyNames.length && ['string', 'boolean', 'number'].indexOf(typeof (newObject)) < 0) {
-          var delta = {};
-          for (var i = 0; i < propertyNames.length; i++) {
-            var propertyName = propertyNames[i];
-            if (newObject.hasOwnProperty(propertyName)) {
-              if (!oldObject.hasOwnProperty(propertyName) || self.uniqueNames.indexOf(propertyName) >= 0 || propertyName == '$loki' || propertyName == 'meta') {
-                delta[propertyName] = newObject[propertyName];
-              }
-              else {
-                var propertyDelta = getObjectDelta(oldObject[propertyName], newObject[propertyName]);
-                if (typeof propertyDelta !== "undefined" && propertyDelta != {}) {
-                  delta[propertyName] = propertyDelta;
-                }
-              }
-            }
-          }
-          return Object.keys(delta).length === 0 ? undefined : delta;
-        }
-        else {
-          return oldObject === newObject ? undefined : newObject;
-        }
-      }
-
-      this.getObjectDelta = getObjectDelta;
-
-      // clear all the changes
-      function flushChanges() {
-        self.changes = [];
-      }
-
-      this.getChanges = function () {
-        return self.changes;
-      };
-
-      this.flushChanges = flushChanges;
-
-      this.setChangesApi = function (enabled) {
-        self.disableChangesApi = !enabled;
-        if (!enabled) { self.disableDeltaChangesApi = false; }
-      };
-
-      this.on('delete', function deleteCallback(obj) {
-        if (!self.disableChangesApi) {
-          self.createChange(self.name, 'R', obj);
-        }
-      });
-      // wmelon-skip-end
 
       this.on('warning', function (warning) {
         self.lokiConsoleWrapper.warn(warning);
       });
-      // wmelon-skip-start
-      // for de-serialization purposes
-      flushChanges();
-      // wmelon-skip-end
+      
+// (Code skipped for WatermelonDB build)
+
     }
 
     Collection.prototype = new LokiEventEmitter();
     Collection.prototype.contructor = Collection;
-    // wmelon-skip-start
-    /*
-      * For ChangeAPI default to clone entire object, for delta changes create object with only differences (+ $loki and meta)
-      */
-    Collection.prototype.createChange = function (name, op, obj, old) {
-      this.changes.push({
-        name: name,
-        operation: op,
-        obj: op == 'U' && !this.disableDeltaChangesApi ? this.getChangeDelta(obj, old) : JSON.parse(JSON.stringify(obj))
-      });
-    };
+    
+// (Code skipped for WatermelonDB build)
 
-    Collection.prototype.insertMeta = function (obj) {
-      var len, idx;
-
-      if (this.disableMeta || !obj) {
-        return;
-      }
-
-      // if batch insert
-      if (Array.isArray(obj)) {
-        len = obj.length;
-
-        for (idx = 0; idx < len; idx++) {
-          if (!obj[idx].hasOwnProperty('meta')) {
-            obj[idx].meta = {};
-          }
-
-          obj[idx].meta.created = (new Date()).getTime();
-          obj[idx].meta.revision = 0;
-        }
-
-        return;
-      }
-
-      // single object
-      if (!obj.meta) {
-        obj.meta = {};
-      }
-
-      obj.meta.created = (new Date()).getTime();
-      obj.meta.revision = 0;
-    };
-
-    Collection.prototype.updateMeta = function (obj) {
-      if (this.disableMeta || !obj) {
-        return obj;
-      }
-      if (!this.disableFreeze) {
-        obj = unFreeze(obj);
-        obj.meta = unFreeze(obj.meta);
-      }
-      obj.meta.updated = (new Date()).getTime();
-      obj.meta.revision += 1;
-      return obj;
-    };
-
-    Collection.prototype.createInsertChange = function (obj) {
-      this.createChange(this.name, 'I', obj);
-    };
-
-    Collection.prototype.createUpdateChange = function (obj, old) {
-      this.createChange(this.name, 'U', obj, old);
-    };
-
-    Collection.prototype.insertMetaWithChange = function (obj) {
-      this.insertMeta(obj);
-      this.createInsertChange(obj);
-    };
-
-    Collection.prototype.updateMetaWithChange = function (obj, old, objFrozen) {
-      obj = this.updateMeta(obj, objFrozen);
-      this.createUpdateChange(obj, old);
-      return obj;
-    };
-    // wmelon-skip-end
     Collection.prototype.lokiConsoleWrapper = {
       log: function () { },
       warn: function () { },
@@ -5315,134 +3025,20 @@
     };
 
     Collection.prototype.addAutoUpdateObserver = function (object) {
-      // wmelon-skip-start
-      if (!this.autoupdate || typeof Object.observe !== 'function')
-        return;
+      
+// (Code skipped for WatermelonDB build)
 
-      Object.observe(object, this.observerCallback, ['add', 'update', 'delete', 'reconfigure', 'setPrototype']);
-      // wmelon-skip-end
     };
 
     Collection.prototype.removeAutoUpdateObserver = function (object) {
-      // wmelon-skip-start
-      if (!this.autoupdate || typeof Object.observe !== 'function')
-        return;
+      
+// (Code skipped for WatermelonDB build)
 
-      Object.unobserve(object, this.observerCallback);
-      // wmelon-skip-end
     };
 
-    // wmelon-skip-start
-    /**
-     * Adds a named collection transform to the collection
-     * @param {string} name - name to associate with transform
-     * @param {array} transform - an array of transformation 'step' objects to save into the collection
-     * @memberof Collection
-     * @example
-     * users.addTransform('progeny', [
-     *   {
-     *     type: 'find',
-     *     value: {
-     *       'age': {'$lte': 40}
-     *     }
-     *   }
-     * ]);
-     *
-     * var results = users.chain('progeny').data();
-     */
-    Collection.prototype.addTransform = function (name, transform) {
-      if (this.transforms.hasOwnProperty(name)) {
-        throw new Error("a transform by that name already exists");
-      }
+    
+// (Code skipped for WatermelonDB build)
 
-      this.transforms[name] = transform;
-    };
-
-    /**
-     * Retrieves a named transform from the collection.
-     * @param {string} name - name of the transform to lookup.
-     * @memberof Collection
-     */
-    Collection.prototype.getTransform = function (name) {
-      return this.transforms[name];
-    };
-
-    /**
-     * Updates a named collection transform to the collection
-     * @param {string} name - name to associate with transform
-     * @param {object} transform - a transformation object to save into collection
-     * @memberof Collection
-     */
-    Collection.prototype.setTransform = function (name, transform) {
-      this.transforms[name] = transform;
-    };
-
-    /**
-     * Removes a named collection transform from the collection
-     * @param {string} name - name of collection transform to remove
-     * @memberof Collection
-     */
-    Collection.prototype.removeTransform = function (name) {
-      delete this.transforms[name];
-    };
-
-    Collection.prototype.byExample = function (template) {
-      var k, obj, query;
-      query = [];
-      for (k in template) {
-        if (!template.hasOwnProperty(k)) continue;
-        query.push((
-          obj = {},
-          obj[k] = template[k],
-          obj
-        ));
-      }
-      return {
-        '$and': query
-      };
-    };
-
-    Collection.prototype.findObject = function (template) {
-      return this.findOne(this.byExample(template));
-    };
-
-    Collection.prototype.findObjects = function (template) {
-      return this.find(this.byExample(template));
-    };
-
-    /*----------------------------+
-    | TTL daemon                  |
-    +----------------------------*/
-    Collection.prototype.ttlDaemonFuncGen = function () {
-      var collection = this;
-      var age = this.ttl.age;
-      return function ttlDaemon() {
-        var now = Date.now();
-        var toRemove = collection.chain().where(function daemonFilter(member) {
-          var timestamp = member.meta.updated || member.meta.created;
-          var diff = now - timestamp;
-          return age < diff;
-        });
-        toRemove.remove();
-      };
-    };
-
-    /**
-     * Updates or applies collection TTL settings.
-     * @param {int} age - age (in ms) to expire document from collection
-     * @param {int} interval - time (in ms) to clear collection of aged documents.
-     * @memberof Collection
-     */
-    Collection.prototype.setTTL = function (age, interval) {
-      if (age < 0) {
-        clearInterval(this.ttl.daemon);
-      } else {
-        this.ttl.age = age;
-        this.ttl.ttlInterval = interval;
-        this.ttl.daemon = setInterval(this.ttlDaemonFuncGen(), interval);
-      }
-    };
-    // wmelon-skip-end
     /*----------------------------+
     | INDEXING                    |
     +----------------------------*/
@@ -5791,66 +3387,9 @@
       }
       this.idIndex = index;
     };
-    // wmelon-skip-start
-    /**
-     * Rebuild idIndex async with callback - useful for background syncing with a remote server
-     */
-    Collection.prototype.ensureIdAsync = function (callback) {
-      this.async(function () {
-        this.ensureId();
-      }, callback);
-    };
+    
+// (Code skipped for WatermelonDB build)
 
-    /**
-     * Add a dynamic view to the collection
-     * @param {string} name - name of dynamic view to add
-     * @param {object=} options - options to configure dynamic view with
-     * @param {boolean} [options.persistent=false] - indicates if view is to main internal results array in 'resultdata'
-     * @param {string} [options.sortPriority='passive'] - 'passive' (sorts performed on call to data) or 'active' (after updates)
-     * @param {number} options.minRebuildInterval - minimum rebuild interval (need clarification to docs here)
-     * @returns {DynamicView} reference to the dynamic view added
-     * @memberof Collection
-     * @example
-     * var pview = users.addDynamicView('progeny');
-     * pview.applyFind({'age': {'$lte': 40}});
-     * pview.applySimpleSort('name');
-     *
-     * var results = pview.data();
-     **/
-
-    Collection.prototype.addDynamicView = function (name, options) {
-      var dv = new DynamicView(this, name, options);
-      this.DynamicViews.push(dv);
-
-      return dv;
-    };
-
-    /**
-     * Remove a dynamic view from the collection
-     * @param {string} name - name of dynamic view to remove
-     * @memberof Collection
-     **/
-    Collection.prototype.removeDynamicView = function (name) {
-      this.DynamicViews =
-        this.DynamicViews.filter(function (dv) { return dv.name !== name; });
-    };
-
-    /**
-     * Look up dynamic view reference from within the collection
-     * @param {string} name - name of dynamic view to retrieve reference of
-     * @returns {DynamicView} A reference to the dynamic view with that name
-     * @memberof Collection
-     **/
-    Collection.prototype.getDynamicView = function (name) {
-      for (var idx = 0; idx < this.DynamicViews.length; idx++) {
-        if (this.DynamicViews[idx].name === name) {
-          return this.DynamicViews[idx];
-        }
-      }
-
-      return null;
-    };
-    // wmelon-skip-end
     /**
      * Applies a 'mongo-like' find query object and passes all results to an update function.
      * For filter function querying you should migrate to [updateWhere()]{@link Collection#updateWhere}.
@@ -5988,13 +3527,9 @@
 
       // update meta and store changes if ChangesAPI is enabled
       // (moved from "insert" event listener to allow internal reference to be used)
-      // wmelon-skip-start
-      if (this.disableChangesApi) {
-        this.insertMeta(obj);
-      } else {
-        this.insertMetaWithChange(obj);
-      }
-      // wmelon-skip-end
+      
+// (Code skipped for WatermelonDB build)
+
 
       if (!this.disableFreeze) {
         deepFreeze(obj);
@@ -6151,13 +3686,9 @@
         this.dirty = true; // for autosave scenarios
 
         // update meta and store changes if ChangesAPI is enabled
-        // wmelon-skip-start
-        if (this.disableChangesApi) {
-          newInternal = this.updateMeta(newInternal);
-        } else {
-          newInternal = this.updateMetaWithChange(newInternal, oldInternal);
-        }
-        // wmelon-skip-end
+        
+// (Code skipped for WatermelonDB build)
+
 
         if (!this.disableFreeze) {
           deepFreeze(newInternal);
@@ -7143,70 +4674,28 @@
 
     /** start the transation */
     Collection.prototype.startTransaction = function () {
-      // wmelon-skip-start
-      if (this.transactional) {
-        this.cachedData = clone(this.data, this.cloneMethod);
-        this.cachedIndex = this.idIndex;
-        this.cachedBinaryIndex = this.binaryIndices;
-        this.cachedDirtyIds = this.dirtyIds;
+      
+// (Code skipped for WatermelonDB build)
 
-        // propagate startTransaction to dynamic views
-        for (var idx = 0; idx < this.DynamicViews.length; idx++) {
-          this.DynamicViews[idx].startTransaction();
-        }
-      }
-      // wmelon-skip-end
     };
 
     /** commit the transation */
     Collection.prototype.commit = function () {
-      // wmelon-skip-start
-      if (this.transactional) {
-        this.cachedData = null;
-        this.cachedIndex = null;
-        this.cachedBinaryIndex = null;
-        this.cachedDirtyIds = null;
+      
+// (Code skipped for WatermelonDB build)
 
-        // propagate commit to dynamic views
-        for (var idx = 0; idx < this.DynamicViews.length; idx++) {
-          this.DynamicViews[idx].commit();
-        }
-      }
-      // wmelon-skip-end
     };
 
     /** roll back the transation */
     Collection.prototype.rollback = function () {
-      // wmelon-skip-start
-      if (this.transactional) {
-        if (this.cachedData !== null && this.cachedIndex !== null) {
-          this.data = this.cachedData;
-          this.idIndex = this.cachedIndex;
-          this.binaryIndices = this.cachedBinaryIndex;
-          this.dirtyIds = this.cachedDirtyIds;
-        }
+      
+// (Code skipped for WatermelonDB build)
 
-        // propagate rollback to dynamic views
-        for (var idx = 0; idx < this.DynamicViews.length; idx++) {
-          this.DynamicViews[idx].rollback();
-        }
-      }
-      // wmelon-skip-end
     };
 
-    // wmelon-skip-start
-    // async executor. This is only to enable callbacks at the end of the execution.
-    Collection.prototype.async = function (fun, callback) {
-      setTimeout(function () {
-        if (typeof fun === 'function') {
-          fun();
-          callback();
-        } else {
-          throw new TypeError('Argument passed for async execution is not a function');
-        }
-      }, 0);
-    };
-    // wmelon-skip-end
+    
+// (Code skipped for WatermelonDB build)
+
     /**
      * Query the collection by supplying a javascript filter function.
      * @example
@@ -7221,382 +4710,15 @@
     Collection.prototype.where = function (fun) {
       return this.chain().where(fun).data();
     };
-    // wmelon-skip-start
-    /**
-     * Map Reduce operation
-     *
-     * @param {function} mapFunction - function to use as map function
-     * @param {function} reduceFunction - function to use as reduce function
-     * @returns {data} The result of your mapReduce operation
-     * @memberof Collection
-     */
-    Collection.prototype.mapReduce = function (mapFunction, reduceFunction) {
-      try {
-        return reduceFunction(this.data.map(mapFunction));
-      } catch (err) {
-        throw err;
-      }
-    };
+    
+// (Code skipped for WatermelonDB build)
 
-    /**
-     * Join two collections on specified properties
-     *
-     * @param {array|Resultset|Collection} joinData - array of documents to 'join' to this collection
-     * @param {string} leftJoinProp - property name in collection
-     * @param {string} rightJoinProp - property name in joinData
-     * @param {function=} mapFun - (Optional) map function to use
-     * @param {object=} dataOptions - options to data() before input to your map function
-     * @param {bool} dataOptions.removeMeta - allows removing meta before calling mapFun
-     * @param {boolean} dataOptions.forceClones - forcing the return of cloned objects to your map object
-     * @param {string} dataOptions.forceCloneMethod - Allows overriding the default or collection specified cloning method.
-     * @returns {Resultset} Result of the mapping operation
-     * @memberof Collection
-     */
-    Collection.prototype.eqJoin = function (joinData, leftJoinProp, rightJoinProp, mapFun, dataOptions) {
-      // logic in Resultset class
-      return new Resultset(this).eqJoin(joinData, leftJoinProp, rightJoinProp, mapFun, dataOptions);
-    };
-    // wmelon-skip-end
-    // wmelon-skip-start
-    /* ------ STAGING API -------- */
-    /**
-     * stages: a map of uniquely identified 'stages', which hold copies of objects to be
-     * manipulated without affecting the data in the original collection
-     */
-    Collection.prototype.stages = {};
+    
+// (Code skipped for WatermelonDB build)
 
-    /**
-     * (Staging API) create a stage and/or retrieve it
-     * @memberof Collection
-     */
-    Collection.prototype.getStage = function (name) {
-      if (!this.stages[name]) {
-        this.stages[name] = {};
-      }
-      return this.stages[name];
-    };
-    /**
-     * a collection of objects recording the changes applied through a commmitStage
-     */
-    Collection.prototype.commitLog = [];
+    
+// (Code skipped for WatermelonDB build)
 
-    /**
-     * (Staging API) create a copy of an object and insert it into a stage
-     * @memberof Collection
-     */
-    Collection.prototype.stage = function (stageName, obj) {
-      var copy = JSON.parse(JSON.stringify(obj));
-      this.getStage(stageName)[obj.$loki] = copy;
-      return copy;
-    };
-
-    /**
-     * (Staging API) re-attach all objects to the original collection, so indexes and views can be rebuilt
-     * then create a message to be inserted in the commitlog
-     * @param {string} stageName - name of stage
-     * @param {string} message
-     * @memberof Collection
-     */
-    Collection.prototype.commitStage = function (stageName, message) {
-      var stage = this.getStage(stageName),
-        prop,
-        timestamp = new Date().getTime();
-
-      for (prop in stage) {
-
-        this.update(stage[prop]);
-        this.commitLog.push({
-          timestamp: timestamp,
-          message: message,
-          data: JSON.parse(JSON.stringify(stage[prop]))
-        });
-      }
-      this.stages[stageName] = {};
-    };
-
-    Collection.prototype.no_op = function () {
-      return;
-    };
-    // wmelon-skip-end
-    // wmelon-skip-start
-    /**
-     * @memberof Collection
-     */
-    Collection.prototype.extract = function (field) {
-      var i = 0,
-        len = this.data.length,
-        isDotNotation = isDeepProperty(field),
-        result = [];
-      for (i; i < len; i += 1) {
-        result.push(deepProperty(this.data[i], field, isDotNotation));
-      }
-      return result;
-    };
-
-    /**
-     * @memberof Collection
-     */
-    Collection.prototype.max = function (field) {
-      return Math.max.apply(null, this.extract(field));
-    };
-
-    /**
-     * @memberof Collection
-     */
-    Collection.prototype.min = function (field) {
-      return Math.min.apply(null, this.extract(field));
-    };
-
-    /**
-     * @memberof Collection
-     */
-    Collection.prototype.maxRecord = function (field) {
-      var i = 0,
-        len = this.data.length,
-        deep = isDeepProperty(field),
-        result = {
-          index: 0,
-          value: undefined
-        },
-        max;
-
-      for (i; i < len; i += 1) {
-        if (max !== undefined) {
-          if (max < deepProperty(this.data[i], field, deep)) {
-            max = deepProperty(this.data[i], field, deep);
-            result.index = this.data[i].$loki;
-          }
-        } else {
-          max = deepProperty(this.data[i], field, deep);
-          result.index = this.data[i].$loki;
-        }
-      }
-      result.value = max;
-      return result;
-    };
-
-    /**
-     * @memberof Collection
-     */
-    Collection.prototype.minRecord = function (field) {
-      var i = 0,
-        len = this.data.length,
-        deep = isDeepProperty(field),
-        result = {
-          index: 0,
-          value: undefined
-        },
-        min;
-
-      for (i; i < len; i += 1) {
-        if (min !== undefined) {
-          if (min > deepProperty(this.data[i], field, deep)) {
-            min = deepProperty(this.data[i], field, deep);
-            result.index = this.data[i].$loki;
-          }
-        } else {
-          min = deepProperty(this.data[i], field, deep);
-          result.index = this.data[i].$loki;
-        }
-      }
-      result.value = min;
-      return result;
-    };
-
-    /**
-     * @memberof Collection
-     */
-    Collection.prototype.extractNumerical = function (field) {
-      return this.extract(field).map(parseBase10).filter(Number).filter(function (n) {
-        return !(isNaN(n));
-      });
-    };
-
-    /**
-     * Calculates the average numerical value of a property
-     *
-     * @param {string} field - name of property in docs to average
-     * @returns {number} average of property in all docs in the collection
-     * @memberof Collection
-     */
-    Collection.prototype.avg = function (field) {
-      return average(this.extractNumerical(field));
-    };
-
-    /**
-     * Calculate standard deviation of a field
-     * @memberof Collection
-     * @param {string} field
-     */
-    Collection.prototype.stdDev = function (field) {
-      return standardDeviation(this.extractNumerical(field));
-    };
-
-    /**
-     * @memberof Collection
-     * @param {string} field
-     */
-    Collection.prototype.mode = function (field) {
-      var dict = {},
-        data = this.extract(field);
-      data.forEach(function (obj) {
-        if (dict[obj]) {
-          dict[obj] += 1;
-        } else {
-          dict[obj] = 1;
-        }
-      });
-      var max,
-        prop, mode;
-      for (prop in dict) {
-        if (max) {
-          if (max < dict[prop]) {
-            mode = prop;
-          }
-        } else {
-          mode = prop;
-          max = dict[prop];
-        }
-      }
-      return mode;
-    };
-
-    /**
-     * @memberof Collection
-     * @param {string} field - property name
-     */
-    Collection.prototype.median = function (field) {
-      var values = this.extractNumerical(field);
-      values.sort(sub);
-
-      var half = Math.floor(values.length / 2);
-
-      if (values.length % 2) {
-        return values[half];
-      } else {
-        return (values[half - 1] + values[half]) / 2.0;
-      }
-    };
-
-    /**
-     * General utils, including statistical functions
-     */
-    function isDeepProperty(field) {
-      return field.indexOf('.') !== -1;
-    }
-
-    function parseBase10(num) {
-      return parseFloat(num, 10);
-    }
-
-    function isNotUndefined(obj) {
-      return obj !== undefined;
-    }
-
-    function add(a, b) {
-      return a + b;
-    }
-
-    function sub(a, b) {
-      return a - b;
-    }
-
-    function median(values) {
-      values.sort(sub);
-      var half = Math.floor(values.length / 2);
-      return (values.length % 2) ? values[half] : ((values[half - 1] + values[half]) / 2.0);
-    }
-
-    function average(array) {
-      return (array.reduce(add, 0)) / array.length;
-    }
-
-    function standardDeviation(values) {
-      var avg = average(values);
-      var squareDiffs = values.map(function (value) {
-        var diff = value - avg;
-        var sqrDiff = diff * diff;
-        return sqrDiff;
-      });
-
-      var avgSquareDiff = average(squareDiffs);
-
-      var stdDev = Math.sqrt(avgSquareDiff);
-      return stdDev;
-    }
-
-    function deepProperty(obj, property, isDeep) {
-      if (isDeep === false) {
-        // pass without processing
-        return obj[property];
-      }
-      var pieces = property.split('.'),
-        root = obj;
-      while (pieces.length > 0) {
-        root = root[pieces.shift()];
-      }
-      return root;
-    }
-
-    function binarySearch(array, item, fun) {
-      var lo = 0,
-        hi = array.length,
-        compared,
-        mid;
-      while (lo < hi) {
-        mid = (lo + hi) >> 1;
-        compared = fun.apply(null, [item, array[mid]]);
-        if (compared === 0) {
-          return {
-            found: true,
-            index: mid
-          };
-        } else if (compared < 0) {
-          hi = mid;
-        } else {
-          lo = mid + 1;
-        }
-      }
-      return {
-        found: false,
-        index: hi
-      };
-    }
-
-    function BSonSort(fun) {
-      return function (array, item) {
-        return binarySearch(array, item, fun);
-      };
-    }
-
-    function KeyValueStore() { }
-
-    KeyValueStore.prototype = {
-      keys: [],
-      values: [],
-      sort: function (a, b) {
-        return (a < b) ? -1 : ((a > b) ? 1 : 0);
-      },
-      setSort: function (fun) {
-        this.bs = new BSonSort(fun);
-      },
-      bs: function () {
-        return new BSonSort(this.sort);
-      },
-      set: function (key, value) {
-        var pos = this.bs(this.keys, key);
-        if (pos.found) {
-          this.values[pos.index] = value;
-        } else {
-          this.keys.splice(pos.index, 0, key);
-          this.values.splice(pos.index, 0, value);
-        }
-      },
-      get: function (key) {
-        return this.values[binarySearch(this.keys, key, this.sort).index];
-      }
-    };
-    // wmelon-skip-end
     function UniqueIndex(uniqueField) {
       this.field = uniqueField;
       this.keyMap = Object.create(null);
@@ -7651,151 +4773,25 @@
       this.keyMap = Object.create(null);
       this.lokiMap = Object.create(null);
     };
-    // wmelon-skip-start
-    function ExactIndex(exactField) {
-      this.index = Object.create(null);
-      this.field = exactField;
-    }
+    
+// (Code skipped for WatermelonDB build)
 
-    // add the value you want returned to the key in the index
-    ExactIndex.prototype = {
-      set: function add(key, val) {
-        if (this.index[key]) {
-          this.index[key].push(val);
-        } else {
-          this.index[key] = [val];
-        }
-      },
-
-      // remove the value from the index, if the value was the last one, remove the key
-      remove: function remove(key, val) {
-        var idxSet = this.index[key];
-        for (var i in idxSet) {
-          if (idxSet[i] == val) {
-            idxSet.splice(i, 1);
-          }
-        }
-        if (idxSet.length < 1) {
-          this.index[key] = undefined;
-        }
-      },
-
-      // get the values related to the key, could be more than one
-      get: function get(key) {
-        return this.index[key];
-      },
-
-      // clear will zap the index
-      clear: function clear(key) {
-        this.index = {};
-      }
-    };
-
-    function SortedIndex(sortedField) {
-      this.field = sortedField;
-    }
-
-    SortedIndex.prototype = {
-      keys: [],
-      values: [],
-      // set the default sort
-      sort: function (a, b) {
-        return (a < b) ? -1 : ((a > b) ? 1 : 0);
-      },
-      bs: function () {
-        return new BSonSort(this.sort);
-      },
-      // and allow override of the default sort
-      setSort: function (fun) {
-        this.bs = new BSonSort(fun);
-      },
-      // add the value you want returned  to the key in the index
-      set: function (key, value) {
-        var pos = binarySearch(this.keys, key, this.sort);
-        if (pos.found) {
-          this.values[pos.index].push(value);
-        } else {
-          this.keys.splice(pos.index, 0, key);
-          this.values.splice(pos.index, 0, [value]);
-        }
-      },
-      // get all values which have a key == the given key
-      get: function (key) {
-        var bsr = binarySearch(this.keys, key, this.sort);
-        if (bsr.found) {
-          return this.values[bsr.index];
-        } else {
-          return [];
-        }
-      },
-      // get all values which have a key < the given key
-      getLt: function (key) {
-        var bsr = binarySearch(this.keys, key, this.sort);
-        var pos = bsr.index;
-        if (bsr.found) pos--;
-        return this.getAll(key, 0, pos);
-      },
-      // get all values which have a key > the given key
-      getGt: function (key) {
-        var bsr = binarySearch(this.keys, key, this.sort);
-        var pos = bsr.index;
-        if (bsr.found) pos++;
-        return this.getAll(key, pos, this.keys.length);
-      },
-
-      // get all vals from start to end
-      getAll: function (key, start, end) {
-        var results = [];
-        for (var i = start; i < end; i++) {
-          results = results.concat(this.values[i]);
-        }
-        return results;
-      },
-      // just in case someone wants to do something smart with ranges
-      getPos: function (key) {
-        return binarySearch(this.keys, key, this.sort);
-      },
-      // remove the value from the index, if the value was the last one, remove the key
-      remove: function (key, value) {
-        var pos = binarySearch(this.keys, key, this.sort).index;
-        var idxSet = this.values[pos];
-        for (var i in idxSet) {
-          if (idxSet[i] == value) idxSet.splice(i, 1);
-        }
-        if (idxSet.length < 1) {
-          this.keys.splice(pos, 1);
-          this.values.splice(pos, 1);
-        }
-      },
-      // clear will zap the index
-      clear: function () {
-        this.keys = [];
-        this.values = [];
-      }
-    };
-    // wmelon-skip-end
     Loki.deepFreeze = deepFreeze;
     Loki.freeze = freeze;
     Loki.unFreeze = unFreeze;
     Loki.LokiOps = LokiOps;
     Loki.Collection = Collection;
-    // wmelon-skip-start
-    Loki.DynamicView = DynamicView;
-    // wmelon-skip-end
+    
+// (Code skipped for WatermelonDB build)
+
     Loki.Resultset = Resultset;
-    // wmelon-skip-start
-    Loki.KeyValueStore = KeyValueStore;
-    // wmelon-skip-end
+    
+// (Code skipped for WatermelonDB build)
+
     Loki.LokiMemoryAdapter = LokiMemoryAdapter;
-    // wmelon-skip-start
-    Loki.LokiPartitioningAdapter = LokiPartitioningAdapter;
-    Loki.LokiLocalStorageAdapter = LokiLocalStorageAdapter;
-    Loki.LokiFsAdapter = LokiFsAdapter;
-    Loki.persistenceAdapters = {
-      fs: LokiFsAdapter,
-      localStorage: LokiLocalStorageAdapter
-    };
-    // wmelon-skip-end
+    
+// (Code skipped for WatermelonDB build)
+
     Loki.aeq = aeqHelper;
     Loki.lt = ltHelper;
     Loki.gt = gtHelper;
