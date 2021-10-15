@@ -1,6 +1,6 @@
 {
   "name": "@nozbe/lokijs",
-  "version": "1.5.12-wmelon4",
+  "version": "1.5.12-wmelon5",
   "description": "Nozbe's fork of LokiJS, optimized for WatermelonDB",
   "homepage": "https://techfort.github.io/LokiJS/",
   "main": "src/lokijs.wmelon.js",
