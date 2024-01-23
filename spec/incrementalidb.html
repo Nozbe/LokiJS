@@ -7,6 +7,7 @@
   </script>
   <script type="text/javascript" src="../src/lokijs.js"></script>
   <script type="text/javascript" src="../src/incremental-indexeddb-adapter.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
 </head>
 <body>
 <h2>IncrementalIDB tests and benchmark</h2>
@@ -55,14 +56,14 @@ function checkDatabaseCopyIntegrity(source, copy) {
   })
 }
 
-function saveAndCheckDatabaseCopyIntegrity(source) {
+function saveAndCheckDatabaseCopyIntegrity(source, adapterOptions=undefined) {
   return new Promise(resolve => {
     const beforeSave = new Date()
     source.saveDatabase((saveError) => {
       const saveTime = new Date() - beforeSave
       expectToBe(saveError, undefined)
 
-      let copy = new loki('incremental_idb_tester', { adapter: new IncrementalIndexedDBAdapter(), verbose: true });
+      let copy = new loki(source.filename, { adapter: new IncrementalIndexedDBAdapter(adapterOptions), verbose: true });
       const beforeLoad = new Date()
       copy.loadDatabase({}, (loadError) => {
         const loadTime = new Date() - beforeLoad
@@ -77,6 +78,7 @@ function saveAndCheckDatabaseCopyIntegrity(source) {
 function loadLoki(loki) {
   return new Promise((resolve, reject) => {
     loki.loadDatabase({}, error => {
+      console.error('loki.loadDatabase({}, error => {')
       error ? reject(error) : resolve()
     })
   })
@@ -94,6 +96,7 @@ async function startTests(divElement)
   domElement = divElement;
 
   indexedDB.deleteDatabase("incremental_idb_tester")
+  indexedDB.deleteDatabase("encryption_tester")
 
   let idbOverwriteCount = 0;
   let adapter = new IncrementalIndexedDBAdapter({ onDidOverwrite: () => { idbOverwriteCount += 1 } })
@@ -324,6 +327,90 @@ async function startTests(divElement)
     trace(`avg load time: ${loadTimes / fuzzes}ms`)
 
     trace('all fuzz tests done')
+  }
+
+  trace('==> encryption tests')
+
+  {
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
+
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+
+    const key = await crypto.subtle.generateKey(
+        { name: "AES-GCM", length: 256 },
+        true,
+        ["encrypt", "decrypt"]
+    );
+
+    encryptionOptions = {
+      encryptionMode: "web-crypto/aes",
+      encrypt: async function(s) {
+        // if changing algorithm keep at least something async here!
+        const data = encoder.encode(s);
+        const encrypted = await crypto.subtle.encrypt(
+          { name: "AES-GCM", iv: iv },
+          key,
+          data
+        );
+
+        return encrypted;
+      },
+      decrypt: async function(s) {
+        // if changing algorithm keep at least something async here!
+        const decrypted = await crypto.subtle.decrypt(
+          { name: "AES-GCM", iv: iv },
+          key,
+          s
+        );
+        console.log(decrypted)
+        return decoder.decode(decrypted);
+      }
+    }
+
+    const adapterWithEncryption = new IncrementalIndexedDBAdapter({ ...encryptionOptions })
+    const dbWithEncryption = new loki('encryption_tester', { adapter: adapterWithEncryption });
+
+    let enCol1 = dbWithEncryption.addCollection('test_collection', {
+      indices: ['blah'],
+    })
+    let enCol2 = dbWithEncryption.addCollection('test_collection2', {
+      indices: ['blah'],
+    })
+
+    db.collections.forEach(col => {
+      console.time('massAdd')
+      const numberOfRecords = 32000
+      for (let i = 0; i < numberOfRecords; i++) {
+        col.insert({ mass: true, i, blah: 'accumsan congue. Lorem ipsum primis in nibh vel risus. Sed vel lectus. Ut sagittis, ipsum dolor quam. nibh vel risus. Sed vel lectus. Ut sagittis, ipsum dolor quam. Ut sagittis, ipsum dolor quam. nibh vel risus. Sed vel lectus. Ut sagittis, ipsum dolor quam' })
+      }
+      console.timeEnd('massAdd')
+
+      // remove many contiguous records to have empty chunks
+      const dataToDelete = col.data.slice(200, 95)
+      col.remove(dataToDelete)
+
+      // fuzz changes
+      const numberOfDeletions = 2500
+      for (let i = 0;i<numberOfDeletions;i++) {
+        const id = Math.floor(Math.random() * col.data.length)
+        col.remove(col.data[id])
+      }
+
+      const numberOfUpdates = 2500
+      for (let i = 0;i<numberOfUpdates;i++) {
+        const id = Math.floor(Math.random() * col.data.length)
+        const doc = col.data[id]
+        doc.blah = 'UPDATED_' + doc.blah
+        col.update(doc)
+      }
+    })
+
+    const [loadTime, saveTime] = await saveAndCheckDatabaseCopyIntegrity(dbWithEncryption, { ...encryptionOptions });
+
+    trace('ok')
+    trace(`save time: ${saveTime}ms`)
+    trace(`load time: ${loadTime}ms`)
   }
 
   {
