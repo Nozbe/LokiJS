@@ -1,6 +1,6 @@
 {
-  "name": "lokijs",
-  "version": "1.5.12",
+  "name": "pantiko-lokijs",
+  "version": "1.5.12-pantiko-0.2",
   "description": "Fast document oriented javascript in-memory database",
   "homepage": "https://techfort.github.io/LokiJS/",
   "main": "src/lokijs.js",
@@ -27,8 +27,9 @@
     "test:node": "istanbul cover --dir coverage/nodejs node_modules/jasmine/bin/jasmine.js",
     "pretest": "npm run lint",
     "test": "npm run test:browser && npm run test:node",
+    "compile": "npx tsc --project tsconfig.json",
     "build:lokijs": "uglifyjs src/lokijs.js > build/lokijs.min.js",
-    "build:indexedAdapter": "uglifyjs src/loki-indexed-adapter.js > build/loki-indexed-adapter.min.js",
+    "build:indexedAdapter": "npm run compile && uglifyjs src/loki-indexed-adapter.js > build/loki-indexed-adapter.min.js",
     "build": "npm run build:lokijs && npm run build:indexedAdapter",
     "postbuild": "karma start karma.build.conf.js --single-run",
     "prepublish": "npm run build",
@@ -48,21 +49,22 @@
   "bugs": {
     "url": "https://github.com/techfort/LokiJS/issues"
   },
-  "dependencies": {},
   "devDependencies": {
     "istanbul": "^0.4.4",
     "jasmine": "^2.4.1",
     "jsdoc": "^3.5.5",
     "jshint": "^2.9.2",
     "karma": "^1.1.2",
+    "karma-chrome-launcher": "^3.2.0",
     "karma-cli": "^1.0.1",
     "karma-coverage": "^1.1.1",
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.1",
     "mocha": "^2.5.3",
-    "phantomjs": "^1.9.20",
+    "phantomjs": "^2.1.1",
     "rimraf": "^2.5.4",
     "should": "^4.6.5",
+    "typescript": "^5.3.3",
     "uglify-js": "^2.7.0"
   }
 }
