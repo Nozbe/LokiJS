@@ -1802,15 +1802,6 @@
             }
             /* jshint loopfunc:false */
           });
-          // Make sure that the original collection still has access to the data
-          // even if it's loaded into the new collection.
-          var sourceColl = copyColl;
-          coll.getData = function getData() {
-            var data = sourceColl.data;
-            this.getData = null;
-            Object.defineProperty(this, 'data', { value: data, writable: true });
-            return data;
-          };
         } else {
           // load each element individually
           clen = coll.data.length;

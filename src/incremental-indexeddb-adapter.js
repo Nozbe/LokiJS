@@ -519,7 +519,6 @@
               chunk.forEach(function(doc) {
                 data.push(doc);
               });
-              dataChunks[i] = null;
             });
             return data;
           };
